@@ -29,7 +29,7 @@ const Signin = () => {
               className="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-[#FFC107]"
             />
             <h1 className="text-2xl font-bold text-[#0A1F44]">
-              Skillseed Super Admin Login
+              Skillseed Parent Login
             </h1>
           </div>
 
@@ -58,11 +58,21 @@ const Signin = () => {
                 <input
                   type="password"
                   className="w-full pl-12 pr-4 py-3 rounded-full border border-gray-200 focus:border-[#1A73E8] focus:ring-2 focus:ring-[#1A73E8] focus:ring-opacity-20 outline-none transition"
-                  placeholder="Create a password"
+                  placeholder="Enter password"
                 />
               </div>
             </div>
-
+            <div id="signup-footer" className="mt-6 text-center">
+              <p className="text-gray-500">
+                Don't have an account?{" "}
+                <Link
+                  to="/signup"
+                  className="text-[#1A73E8] hover:underline cursor-pointer"
+                >
+                  Sign up
+                </Link>
+              </p>
+            </div>
             <button
               type="submit"
               onClick={handleSubmit}
