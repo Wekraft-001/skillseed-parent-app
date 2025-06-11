@@ -21,7 +21,7 @@ const NotFound = () => {
           changed, or is temporarily unavailable.
         </p>
         <button className="bg-blue-500 hover:bg-blue-600" asChild>
-          <a href="/">Return to Dashboard</a>
+          <a href="/home">Return to Dashboard</a>
         </button>
       </div>
     </div>
