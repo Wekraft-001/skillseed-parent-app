@@ -81,26 +81,12 @@ const AddChild = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="block text-gray-700 font-medium">
-                    Email Address
-                  </label>
+                  <label className="block text-gray-700 font-medium">Age</label>
                   <Input
-                    type="email"
+                    type="number"
                     value={formData.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
-                    placeholder="child@example.com"
-                    className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-600"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-gray-700 font-medium">
-                    Parent Email
-                  </label>
-                  <Input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => handleInputChange("phone", e.target.value)}
-                    placeholder="Enter your email address"
+                    placeholder="6-17"
                     className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-600"
                   />
                 </div>
