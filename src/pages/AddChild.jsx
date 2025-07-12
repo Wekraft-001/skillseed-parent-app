@@ -1,21 +1,98 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Camera, ArrowRight } from "lucide-react";
 import { PageMetadata } from "../components/PageMetadata";
 import { Input } from "../components/ui/formComponents/input";
+import { useForm } from "react-hook-form";
 
 const AddChild = () => {
+  const apiURL = import.meta.env.VITE_REACT_APP_BASE_URL;
+  const token = localStorage.getItem("parentToken");
+  const { handleSubmit } = useForm();
+  const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
+
   const [formData, setFormData] = useState({
-    fullName: "",
-    specialty: "Science",
-    email: "",
-    phone: "",
-    bio: "",
+    firstName: "",
+    lastName: "",
+    age: "",
+    grade: "",
+    password: "",
   });
 
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      alert("Image too large. Max size is 2MB.");
+      return;
+    }
+
+    setImage(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleAddChild = async () => {
+    const { firstName, lastName, age, grade, password } = formData;
+
+    if (!image) {
+      alert("Profile image is required.");
+      return;
+    }
+    if (!firstName || !lastName || !age || !grade || !password) {
+      alert("Please fill out all fields.");
+      return;
+    }
+
+    setLoading(true);
+    const form = new FormData();
+    form.append("firstName", firstName);
+    form.append("lastName", lastName);
+    form.append("age", age);
+    form.append("grade", grade);
+    form.append("password", password);
+    form.append("role", "student");
+    form.append("image", image);
+
+    try {
+      const response = await axios.post(`${apiURL}/auth/addStudent`, form, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.status === 201) {
+        alert("Child added successfully!");
+        setFormData({
+          firstName: "",
+          lastName: "",
+          age: "",
+          grade: "",
+          password: "",
+        });
+        setImage(null);
+        setPreview(null);
+        onOpenChange(false);
+      }
+    } catch (error) {
+      const message = error?.response?.data?.message || "Something went wrong.";
+      alert(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <PageMetadata
@@ -49,7 +126,10 @@ const AddChild = () => {
               <p className="text-gray-600">Create your child's profile</p>
             </div>
 
-            <form className="space-y-4 relative z-10">
+            <form
+              onSubmit={handleSubmit(handleAddChild)}
+              className="space-y-4 relative z-10"
+            >
               <div className="grid gap-4">
                 <div className="space-y-2">
                   <label className="block text-gray-700 font-medium">
@@ -57,10 +137,9 @@ const AddChild = () => {
                   </label>
                   <Input
                     type="text"
-                    value={formData.fullName}
-                    onChange={(e) =>
-                      handleInputChange("fullName", e.target.value)
-                    }
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
                     placeholder="Enter Child's First Name"
                     className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-600"
                   />
@@ -72,10 +151,9 @@ const AddChild = () => {
 
                   <Input
                     type="text"
-                    value={formData.specialty}
-                    onChange={(e) =>
-                      handleInputChange("specialty", e.target.value)
-                    }
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
                     placeholder="Enter Child's Last Name"
                     className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-600"
                   />
@@ -83,9 +161,10 @@ const AddChild = () => {
                 <div className="space-y-2">
                   <label className="block text-gray-700 font-medium">Age</label>
                   <Input
-                    type="number"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    type="text"
+                    name="age"
+                    value={formData.age}
+                    onChange={handleInputChange}
                     placeholder="6-17"
                     className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-600"
                   />
@@ -95,10 +174,24 @@ const AddChild = () => {
                     Grade
                   </label>
                   <Input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => handleInputChange("phone", e.target.value)}
+                    type="text"
+                    name="grade"
+                    value={formData.grade}
+                    onChange={handleInputChange}
                     placeholder="Enter your child's grade"
+                    className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-gray-700 font-medium">
+                    Password
+                  </label>
+                  <Input
+                    type="text"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    placeholder="password"
                     className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-600"
                   />
                 </div>
@@ -109,19 +202,27 @@ const AddChild = () => {
                 <div className="flex items-center space-x-6">
                   <div className="relative group">
                     <img
-                      src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=facearea&w=96&h=96&facepad=2&q=80"
+                      src={
+                        preview ||
+                        "https://via.placeholder.com/96x96.png?text=Preview"
+                      }
                       className="w-24 h-24 rounded-full border-4 border-blue-600 object-cover shadow-lg bg-gray-100"
-                      alt="Profile"
+                      alt="Preview"
                     />
-                    <button
-                      type="button"
-                      className="absolute bottom-0 right-0 bg-yellow-400 p-2 rounded-full border-2 border-white hover:bg-yellow-400/90 text-gray-900"
-                    >
-                      <Camera className="w-4 h-4" />
-                    </button>
+                    <label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        hidden
+                      />
+                      <span className="absolute bottom-0 right-0 bg-yellow-400 p-2 rounded-full border-2 border-white hover:bg-yellow-400/90 text-gray-900 cursor-pointer">
+                        <Camera className="w-4 h-4" />
+                      </span>
+                    </label>
                   </div>
                   <span className="text-gray-500 text-sm">
-                    Use a cute photo! (JPG or PNG, Max 2MB)
+                    JPG or PNG, Max 2MB
                   </span>
                 </div>
               </div>
@@ -129,9 +230,10 @@ const AddChild = () => {
               <div className="flex justify-end space-x-4">
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-[#3C91BA] text-white rounded-full font-semibold hover:bg-blue-600/90 flex items-center space-x-2"
+                  disabled={loading}
+                  className="px-6 py-3 bg-[#3C91BA] text-white rounded-full font-semibold hover:bg-blue-600/90 flex items-center space-x-2 cursor-pointer"
                 >
-                  <span>Submit</span>
+                  <span>{loading ? "Submitting..." : "Submit"}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
