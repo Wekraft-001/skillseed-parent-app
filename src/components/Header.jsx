@@ -1,4 +1,6 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { Bell, LogOut, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useSidebar } from "../context/SidebarContext";
@@ -13,7 +15,11 @@ import {
 import Logo from "../assets/logo.svg";
 
 const Header = () => {
+  const apiURL = import.meta.env.VITE_REACT_APP_BASE_URL;
+  const token = localStorage.getItem("parentToken");
+  const [userData, setUserData] = useState({});
   const { toggleSidebar } = useSidebar();
+  const navigate = useNavigate();
 
   const notifications = [
     {
@@ -153,6 +159,32 @@ const Header = () => {
         );
     }
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem("parentToken"); // clear the token
+    navigate("/"); // redirect to login
+  };
+
+  useEffect(() => {
+    const userDetails = () => {
+      axios
+        .get(`${apiURL}/users/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-type": "application/json; charset=UTF-8",
+          },
+        })
+        .then((response) => {
+          // console.log(response.data, "User Info");
+          setUserData(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching vendors:", error);
+        });
+    };
+
+    userDetails();
+  }, []);
   return (
     <header className="h-16 border-b border-gray-200 flex items-center justify-between px-4 fixed top-0 left-0 right-0 bg-white z-50">
       <div className="flex items-center">
@@ -509,10 +541,13 @@ const Header = () => {
                 </div>
               </MenuItem>
               <MenuItem>
-                <div className="flex items-center gap-3 text-base w-full justify-center py-3">
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-3 text-base w-full justify-center py-3 cursor-pointer"
+                >
                   <LogOut size={20} />
                   <span>Logout</span>
-                </div>
+                </button>
               </MenuItem>
             </MenuItems>
           </Transition>

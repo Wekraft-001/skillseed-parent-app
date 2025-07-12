@@ -33,9 +33,9 @@ const Signin = () => {
     const url = `${apiURL}/auth/signin`;
     try {
       const response = await axios.post(url, loginDetails);
-      console.log(response, "response");
+      // console.log(response, "response");
       let accessToken = response.data.access_token;
-      localStorage.setItem("adminToken", accessToken);
+      localStorage.setItem("parentToken", accessToken);
       navigate("/home");
     } catch (error) {
       console.error("Error in API call:", error);

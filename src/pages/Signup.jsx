@@ -47,7 +47,7 @@ const Signup = () => {
         if (response.status === 201) {
           toast.success("Registeration Successful!");
           setRegister(initialValues);
-          // navigate("/");
+          navigate("/");
         }
         console.log(response, "response from creating data");
       })
