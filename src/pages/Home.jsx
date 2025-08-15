@@ -248,7 +248,7 @@ const Home = () => {
         </div>
 
         {/* Excursions */}
-        <div id="excursions" className="bg-white p-6 rounded-xl shadow-sm">
+        <div id="excursions" className="bg-white p-6 rounded-xl shadow-sm hidden">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-semibold text-lg">Scheduled Excursions</h3>
             <Map className="w-5 h-5 text-[#FFC107]" />

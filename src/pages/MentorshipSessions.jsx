@@ -75,7 +75,7 @@ const MentorshipSessions = () => {
 
       {/* Back Navigation */}
       <div className="mb-6">
-        <Link to="/" className="text-[#1A73E8] flex items-center gap-2 w-fit">
+        <Link to="/home" className="text-[#1A73E8] flex items-center gap-2 w-fit">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"

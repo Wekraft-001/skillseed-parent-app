@@ -110,7 +110,7 @@ const ReflectionsAndFeedback = () => {
 
       {/* Back Navigation */}
       <div className="mb-6">
-        <Link to="/" className="text-[#1A73E8] flex items-center gap-2 w-fit">
+        <Link to="/home" className="text-[#1A73E8] flex items-center gap-2 w-fit">
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Dashboard</span>
         </Link>
@@ -261,7 +261,7 @@ const ReflectionsAndFeedback = () => {
             className="bg-white p-6 rounded-xl shadow-sm"
           >
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-semibold text-lg">Teacher Feedback</h3>
+              <h3 className="font-semibold text-lg">Mentor Feedback</h3>
               <button className="text-[#1A73E8] text-sm flex items-center gap-1">
                 View All
                 <svg

@@ -44,7 +44,7 @@ const AddChild = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleAddChild = async () => {
+  const handleAddChild1 = async () => {
     const { firstName, lastName, age, grade, password } = formData;
 
     if (!image) {
@@ -90,6 +90,36 @@ const AddChild = () => {
       alert(message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddChild = async (formData) => {
+    const payload = new FormData();
+    for (const key in formData) {
+      payload.append(key, formData[key]);
+    }
+
+    try {
+      const response = await fetch(
+        "/api/parent/dashboard/initiate-student-payment",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: payload,
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.paymentLink) {
+        window.location.href = result.paymentLink; // Redirect to Flutterwave
+      } else {
+        alert("Something went wrong with payment initiation.");
+      }
+    } catch (err) {
+      console.error("Error submitting form:", err);
     }
   };
 

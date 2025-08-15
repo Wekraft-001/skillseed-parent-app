@@ -17,6 +17,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "../lib/utils";
 import { ScrollArea } from "./ui/scroll-area";
 import { useSidebar } from "../context/SidebarContext";
+import { GrResources } from "react-icons/gr";
 
 const Sidebar = () => {
   const { isOpen } = useSidebar();
@@ -105,6 +106,11 @@ const Sidebar = () => {
       path: "/reflections",
     },
     {
+      icon: <TrendingUp className="w-5 h-5 mr-2" />,
+      label: "Reports",
+      path: "/reports",
+    },
+    {
       icon: <Users2 className="w-5 h-5 mr-2" />,
       label: "Mentorship",
       path: "/mentorship-sessions",
@@ -120,9 +126,9 @@ const Sidebar = () => {
       path: "/parental-controls",
     },
     {
-      icon: <TrendingUp className="w-5 h-5 mr-2" />,
-      label: "Reports",
-      path: "/reports",
+      icon: <GrResources className="w-5 h-5 mr-2" />,
+      label: "Parental Resources",
+      path: "/parent-resources",
     },
   ];
 

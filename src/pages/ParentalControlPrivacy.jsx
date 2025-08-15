@@ -64,14 +64,14 @@ const ParentalControlPrivacy = () => {
       action: "Change",
       onClick: () => console.log("Change Password"),
     },
-    {
-      id: "2fa",
-      icon: <LockKeyhole className="w-5 h-5 text-[#1A73E8]" />,
-      title: "Two-Factor Authentication",
-      description: "Add an extra layer of security",
-      action: "Enable",
-      onClick: () => console.log("Enable 2FA"),
-    },
+    // {
+    //   id: "2fa",
+    //   icon: <LockKeyhole className="w-5 h-5 text-[#1A73E8]" />,
+    //   title: "Two-Factor Authentication",
+    //   description: "Add an extra layer of security",
+    //   action: "Enable",
+    //   onClick: () => console.log("Enable 2FA"),
+    // },
     {
       id: "notifications",
       icon: <Bell className="w-5 h-5 text-[#1A73E8]" />,
@@ -80,14 +80,14 @@ const ParentalControlPrivacy = () => {
       action: "Manage",
       onClick: () => console.log("Notification Settings"),
     },
-    {
-      id: "activity",
-      icon: <Clock className="w-5 h-5 text-[#1A73E8]" />,
-      title: "Activity Log",
-      description: "View account activity history",
-      action: "View",
-      onClick: () => console.log("Activity Log"),
-    },
+    // {
+    //   id: "activity",
+    //   icon: <Clock className="w-5 h-5 text-[#1A73E8]" />,
+    //   title: "Activity Log",
+    //   description: "View account activity history",
+    //   action: "View",
+    //   onClick: () => console.log("Activity Log"),
+    // },
   ];
 
   const privacyFeatures = [
@@ -205,7 +205,7 @@ const ParentalControlPrivacy = () => {
                   </h2>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Consent Management */}
                   <div
                     id="consent-controls"
@@ -246,7 +246,7 @@ const ParentalControlPrivacy = () => {
                   </div>
 
                   {/* Communication Controls */}
-                  <div
+                  {/* <div
                     id="communication-controls"
                     className="bg-purple-50 p-5 rounded-2xl"
                   >
@@ -280,7 +280,7 @@ const ParentalControlPrivacy = () => {
                         </label>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Access Controls */}
                   <div

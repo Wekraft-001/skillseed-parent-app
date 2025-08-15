@@ -90,7 +90,10 @@ const LearningActivities = () => {
 
       {/* Back Navigation */}
       <div className="mb-6">
-        <Link to="/" className="text-[#1A73E8] flex items-center gap-2 w-fit">
+        <Link
+          to="/home"
+          className="text-[#1A73E8] flex items-center gap-2 w-fit"
+        >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Dashboard</span>
         </Link>

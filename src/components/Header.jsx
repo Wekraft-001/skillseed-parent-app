@@ -1,5 +1,6 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment } from "react";
 import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Bell, LogOut, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -17,7 +18,6 @@ import Logo from "../assets/logo.svg";
 const Header = () => {
   const apiURL = import.meta.env.VITE_REACT_APP_BASE_URL;
   const token = localStorage.getItem("parentToken");
-  const [userData, setUserData] = useState({});
   const { toggleSidebar } = useSidebar();
   const navigate = useNavigate();
 
@@ -161,30 +161,39 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("parentToken"); // clear the token
-    navigate("/"); // redirect to login
+    localStorage.removeItem("parentToken");
+    navigate("/");
   };
 
-  useEffect(() => {
-    const userDetails = () => {
-      axios
-        .get(`${apiURL}/users/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-type": "application/json; charset=UTF-8",
-          },
-        })
-        .then((response) => {
-          // console.log(response.data, "User Info");
-          setUserData(response.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching vendors:", error);
-        });
-    };
+  const fetchUserDetails = async () => {
+    const { data } = await axios.get(`${apiURL}/users/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    });
+    console.log(data);
+    return data;
+  };
+  const {
+    data: userData,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["userDetails"],
+    queryFn: fetchUserDetails,
+    enabled: !!token,
+    staleTime: 5 * 60 * 1000,
+  });
 
-    userDetails();
-  }, []);
+  const getInitials = (firstName, lastName) => {
+    if (!firstName && !lastName) return "NN"; // fallback
+    const firstInitial = firstName ? firstName[0].toUpperCase() : "";
+    const lastInitial = lastName ? lastName[0].toUpperCase() : "";
+    return firstInitial + lastInitial;
+  };
+
   return (
     <header className="h-16 border-b border-gray-200 flex items-center justify-between px-4 fixed top-0 left-0 right-0 bg-white z-50">
       <div className="flex items-center">
@@ -313,7 +322,9 @@ const Header = () => {
             <MenuButton className="flex rounded-full text-sm focus:outline-none">
               <span className="sr-only">Open user menu</span>
               <div className="bg-[#3C91BA] w-10 h-10 text-lg font-semibold text-white text-center p-2 rounded-full mx-4 my-2 flex items-center justify-center">
-                SS
+                <div className="bg-[#3C91BA] w-10 h-10 text-lg font-semibold text-white text-center p-2 rounded-full mx-4 my-2 flex items-center justify-center">
+                  {getInitials(userData?.firstName, userData?.lastName)}
+                </div>
               </div>
             </MenuButton>
           </div>
@@ -330,10 +341,16 @@ const Header = () => {
               <MenuItem>
                 <div className="p-4 flex items-center gap-4 border-b">
                   <div className="h-14 w-14 rounded-full flex items-center justify-center bg-[#3C91BA]">
-                    <div className="text-xl font-medium text-white">AA</div>
+                    <div className="text-xl font-medium text-white">
+                      {userData
+                        ? getInitials(userData.firstName, userData.lastName)
+                        : "NN"}
+                    </div>
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold">Sarah Johnson</h3>
+                    <h3 className="text-xl font-bold">
+                      {userData?.firstName + " " + userData?.lastName}
+                    </h3>
                     <p className="text-sm text-gray-500">
                       3 children connected
                     </p>
@@ -341,35 +358,6 @@ const Header = () => {
                 </div>
               </MenuItem>
 
-              <MenuItem className="px-4 py-3 cursor-pointer hover:bg-gray-50">
-                <div className="flex items-center gap-3 text-base">
-                  <div className="p-2 bg-blue-50 rounded-lg">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-blue-600"
-                    >
-                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                      <circle cx="9" cy="7" r="4" />
-                      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="font-medium">My Children</div>
-                    <div className="text-xs text-gray-500">
-                      Manage connected accounts
-                    </div>
-                  </div>
-                </div>
-              </MenuItem>
               <MenuItem className="px-4 py-3 cursor-pointer hover:bg-gray-50">
                 <div className="flex items-center gap-3 text-base">
                   <div className="p-2 bg-green-50 rounded-lg">
@@ -391,12 +379,12 @@ const Header = () => {
                       <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                     </svg>
                   </div>
-                  <div>
+                  <Link to="/add-child">
                     <div className="font-medium">Add a Child</div>
                     <div className="text-xs text-gray-500">
                       Connect a new account
                     </div>
-                  </div>
+                  </Link>
                 </div>
               </MenuItem>
               <MenuItem className="px-4 py-3 cursor-pointer hover:bg-gray-50">
@@ -421,12 +409,12 @@ const Header = () => {
                       <polyline points="10 9 9 9 8 9"></polyline>
                     </svg>
                   </div>
-                  <div>
+                  <Link to="reports">
                     <div className="font-medium">Progress Reports</div>
                     <div className="text-xs text-gray-500">
                       View all children's progress
                     </div>
-                  </div>
+                  </Link>
                 </div>
               </MenuItem>
 
@@ -458,35 +446,6 @@ const Header = () => {
               </MenuItem>
               <MenuItem className="px-4 py-3 cursor-pointer hover:bg-gray-50">
                 <div className="flex items-center gap-3 text-base">
-                  <div className="p-2 bg-pink-50 rounded-lg">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-pink-600"
-                    >
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="font-medium">Messages</div>
-                    <div className="text-xs text-gray-500">
-                      From teachers and system
-                    </div>
-                  </div>
-                  <span className="ml-auto bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    3
-                  </span>
-                </div>
-              </MenuItem>
-              <MenuItem className="px-4 py-3 cursor-pointer hover:bg-gray-50">
-                <div className="flex items-center gap-3 text-base">
                   <div className="p-2 bg-gray-100 rounded-lg">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -504,12 +463,12 @@ const Header = () => {
                       <circle cx="12" cy="12" r="3" />
                     </svg>
                   </div>
-                  <div>
+                  <Link to="/parental-controls">
                     <div className="font-medium">Parental Controls</div>
                     <div className="text-xs text-gray-500">
                       Manage settings & restrictions
                     </div>
-                  </div>
+                  </Link>
                 </div>
               </MenuItem>
               <MenuItem className="px-4 py-3 cursor-pointer hover:bg-gray-50">
@@ -532,12 +491,12 @@ const Header = () => {
                       <line x1="12" y1="17" x2="12.01" y2="17"></line>
                     </svg>
                   </div>
-                  <div>
+                  <Link to="/parent-resources">
                     <div className="font-medium">Parent Resources</div>
                     <div className="text-xs text-gray-500">
                       Guides & support
                     </div>
-                  </div>
+                  </Link>
                 </div>
               </MenuItem>
               <MenuItem>
