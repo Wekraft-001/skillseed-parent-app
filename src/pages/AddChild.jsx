@@ -9,7 +9,6 @@ import { useForm } from "react-hook-form";
 const AddChild = () => {
   const apiURL = import.meta.env.VITE_REACT_APP_BASE_URL;
   const token = localStorage.getItem("parentToken");
-  const navigate = useNavigate();
   const { handleSubmit } = useForm();
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
