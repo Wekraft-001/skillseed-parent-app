@@ -97,7 +97,7 @@ const ChildCareerProfile = () => {
         {/* Back Navigation */}
         <div className="p-6 flex items-center gap-3">
           <Link
-            to="/"
+            to="/home"
             className="text-[#1A73E8] flex items-center gap-2 cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />

@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { User, Mail, Lock, Star, Rocket } from "lucide-react";
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
+import { FcGoogle } from "react-icons/fc";
 
 const Signin = () => {
   const apiURL = import.meta.env.VITE_REACT_APP_BASE_URL;
@@ -43,6 +44,10 @@ const Signin = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${apiURL}/auth/google`;
   };
 
   const togglePasswordVisibility = () => {
@@ -164,6 +169,17 @@ const Signin = () => {
                 "Sigin"
               )}
             </button>
+
+            {/* Google Login Button */}
+            <button
+              type="button"
+              onClick={handleGoogleLogin}
+              className="w-full mt-4 border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 py-3 rounded-full transition duration-200 flex items-center justify-center gap-3 cursor-pointer"
+            >
+              <FcGoogle size={24} />
+              Sign in with Google
+            </button>
+
             {errorMessage && (
               <div className="bg-red-500 text-white text-sm font-primaryMedium p-4 mt-4 text-center">
                 {errorMessage}

@@ -14,6 +14,7 @@ import ScheduledExcursions from "./pages/ScheduledExcursions";
 import ReflectionsAndFeedback from "./pages/ReflectionsAndFeedback";
 import ParentalControlPrivacy from "./pages/ParentalControlPrivacy";
 import ParentResources from "./pages/ParentResources";
+import PaymentVerify from "./pages/PaymentVerify";
 
 const App = () => (
   <ThemeProvider>
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/" element={<Layout />}>
             <Route path="home" element={<Home />} />
             <Route path="add-child" element={<AddChild />} />
+            <Route path="/payment-verify" element={<PaymentVerify />} />
             <Route path="business-tools" element={<NotFound />} />
             <Route path="support" element={<NotFound />} />
             <Route path="more" element={<NotFound />} />

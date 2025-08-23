@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Camera, ArrowRight } from "lucide-react";
 import { PageMetadata } from "../components/PageMetadata";
 import { Input } from "../components/ui/formComponents/input";
@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 const AddChild = () => {
   const apiURL = import.meta.env.VITE_REACT_APP_BASE_URL;
   const token = localStorage.getItem("parentToken");
+  const navigate = useNavigate();
   const { handleSubmit } = useForm();
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
@@ -44,7 +45,7 @@ const AddChild = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleAddChild1 = async () => {
+  const handleAddChild = async () => {
     const { firstName, lastName, age, grade, password } = formData;
 
     if (!image) {
@@ -57,72 +58,57 @@ const AddChild = () => {
     }
 
     setLoading(true);
-    const form = new FormData();
-    form.append("firstName", firstName);
-    form.append("lastName", lastName);
-    form.append("age", age);
-    form.append("grade", grade);
-    form.append("password", password);
-    form.append("role", "student");
-    form.append("image", image);
 
     try {
-      const response = await axios.post(`${apiURL}/auth/addStudent`, form, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.status === 201) {
-        alert("Child added successfully!");
-        setFormData({
-          firstName: "",
-          lastName: "",
-          age: "",
-          grade: "",
-          password: "",
-        });
-        setImage(null);
-        setPreview(null);
-        onOpenChange(false);
-      }
-    } catch (error) {
-      const message = error?.response?.data?.message || "Something went wrong.";
+      // STEP 1: Initialize Registeration
+      const form = new FormData();
+      form.append("firstName", firstName);
+      form.append("lastName", lastName);
+      form.append("age", age);
+      form.append("grade", grade);
+      form.append("password", password);
+      form.append("role", "student");
+      form.append("image", image);
+
+      const registerRes = await axios.post(
+        `${apiURL}/parent/dashboard/students/initiate`,
+        form,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log(registerRes.data, "response");
+
+      const childTempId = registerRes.data.tempData.childTempId;
+
+      // STEP 2: Generate payment link
+      const paymentPayload = {
+        amount: 50000,
+        currency: "RWF",
+        payment_options: "mobilemoneyrwanda",
+      };
+
+      const paymentRes = await axios.post(
+        `${apiURL}/parent/dashboard/students/${childTempId}/payment-link`,
+        paymentPayload,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      console.log(paymentRes.data, "checking payment response");
+      window.location.href = paymentRes.data.paymentLink;
+
+      // Finanlize student after verfication
+      // await axios.post(
+      //   `https://localhost:5500/parent/dashboard/students/${childTempId}/finalize`
+      // );
+    } catch (err) {
+      console.error(err);
+      const message = err?.response?.data?.message || "Something went wrong.";
       alert(message);
     } finally {
       setLoading(false);
     }
   };
-
-  const handleAddChild = async (formData) => {
-    const payload = new FormData();
-    for (const key in formData) {
-      payload.append(key, formData[key]);
-    }
-
-    try {
-      const response = await fetch(
-        "/api/parent/dashboard/initiate-student-payment",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-          body: payload,
-        }
-      );
-
-      const result = await response.json();
-
-      if (result.paymentLink) {
-        window.location.href = result.paymentLink; // Redirect to Flutterwave
-      } else {
-        alert("Something went wrong with payment initiation.");
-      }
-    } catch (err) {
-      console.error("Error submitting form:", err);
-    }
-  };
-
   return (
     <>
       <PageMetadata
