@@ -162,7 +162,7 @@ const Header = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("parentToken");
-    navigate("/");
+    navigate("/signin");
   };
 
   const fetchUserDetails = async () => {
@@ -188,7 +188,7 @@ const Header = () => {
   });
 
   const getInitials = (firstName, lastName) => {
-    if (!firstName && !lastName) return "NN"; // fallback
+    if (!firstName && !lastName) return "NN";
     const firstInitial = firstName ? firstName[0].toUpperCase() : "";
     const lastInitial = lastName ? lastName[0].toUpperCase() : "";
     return firstInitial + lastInitial;
