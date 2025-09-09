@@ -8,6 +8,7 @@ import "react-phone-input-2/lib/style.css";
 import { toast, ToastContainer } from "react-toastify";
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 import "react-toastify/dist/ReactToastify.css";
+import { FcGoogle } from "react-icons/fc";
 
 const Signup = () => {
   const apiURL = import.meta.env.VITE_REACT_APP_BASE_URL;
@@ -47,7 +48,7 @@ const Signup = () => {
         if (response.status === 201) {
           toast.success("Registeration Successful!");
           setRegister(initialValues);
-          navigate("/");
+          navigate("/signin");
         }
         console.log(response, "response from creating data");
       })
@@ -58,6 +59,10 @@ const Signup = () => {
       .finally(() => {
         setLoading(false);
       });
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${apiURL}/auth/google`;
   };
 
   const togglePasswordVisibility = () => {
@@ -225,7 +230,16 @@ const Signup = () => {
               )}
             </button>
           </form>
-
+          <div className="text-center my-4">OR</div >
+          {/* Google Login Button */}
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            className="w-full border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 py-3 rounded-full transition duration-200 flex items-center justify-center gap-3 cursor-pointer"
+          >
+            <FcGoogle size={24} />
+            Sign up with Google
+          </button>
           {/* Additional Options */}
           <div id="signup-footer" className="mt-6 text-center">
             <p className="text-gray-500">

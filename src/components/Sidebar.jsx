@@ -11,13 +11,12 @@ import {
   MessageSquare,
   TrendingUp,
   Shield,
-  UserPlus,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "../lib/utils";
 import { ScrollArea } from "./ui/scroll-area";
 import { useSidebar } from "../context/SidebarContext";
-import { GrResources } from "react-icons/gr";
+import { GrMoney, GrResources } from "react-icons/gr";
 
 const Sidebar = () => {
   const { isOpen } = useSidebar();
@@ -129,6 +128,11 @@ const Sidebar = () => {
       icon: <GrResources className="w-5 h-5 mr-2" />,
       label: "Parental Resources",
       path: "/parent-resources",
+    },
+    {
+      icon: <GrMoney className="w-5 h-5 mr-2" />,
+      label: "Manage Subscription",
+      path: "/subscription-management",
     },
   ];
 

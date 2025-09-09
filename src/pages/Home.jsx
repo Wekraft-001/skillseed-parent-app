@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 import {
   Plus,
   Star,
@@ -15,6 +17,8 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const apiURL = import.meta.env.VITE_REACT_APP_BASE_URL;
+  const token = localStorage.getItem("parentToken");
   const navigate = useNavigate();
   const [selectedChild, setSelectedChild] = useState("emma");
 
@@ -82,12 +86,55 @@ const Home = () => {
     navigate(`/child-career-profile/${childId}`);
   };
 
+  const fetchUserDetails = async () => {
+    const { data } = await axios.get(`${apiURL}/users/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    });
+    console.log(data);
+    return data;
+  };
+  const {
+    data: userData,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["userDetails-home"],
+    queryFn: fetchUserDetails,
+    enabled: !!token,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const fetchMyChildren = async () => {
+    const { data } = await axios.get(`${apiURL}/parent/dashboard/students`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    });
+    console.log(data);
+    return data;
+  };
+  const {
+    data: children = [],
+    // isLoading,
+    // isError,
+    // error,
+  } = useQuery({
+    queryKey: ["my-children-home"],
+    queryFn: fetchMyChildren,
+    enabled: !!token,
+    staleTime: 5 * 60 * 1000,
+  });
   return (
     <div className="bg-[#F5F7FA] min-h-[800px] p-6">
       {/* Welcome Message */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Welcome, Parent!
+        <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2">
+          Welcome, {userData?.firstName}
         </h1>
         <p className="text-gray-600">
           Track your child's learning journey and stay updated on their
@@ -96,7 +143,7 @@ const Home = () => {
       </div>
 
       {/* Child Selector */}
-      <div id="child-selector" className="mb-8 flex flex-wrap gap-4">
+      <div id="child-selector" className="mb-8 flex flex-col md:flex-row gap-4">
         {Object.values(childrenData).map((child) => (
           <div
             key={child.id}
@@ -131,7 +178,7 @@ const Home = () => {
           </div>
         ))}
         <div
-          className="bg-gray-50 p-4 rounded-xl flex flex-col items-center justify-center gap-2 shadow-sm cursor-pointer border-2 border-dashed border-gray-300 hover:border-[#1A73E8] hover:bg-blue-50 transition-colors min-h-[120px] w-full max-w-[200px]"
+          className="bg-gray-50 p-4 rounded-xl flex flex-col items-center justify-center gap-2 shadow-sm cursor-pointer border-2 border-dashed border-gray-300 hover:border-[#1A73E8] hover:bg-blue-50 transition-colors min-h-[120px] w-full md:max-w-[200px]"
           onClick={() => navigate("/add-child")}
         >
           <Plus className="w-6 h-6 text-gray-400" />
@@ -248,7 +295,10 @@ const Home = () => {
         </div>
 
         {/* Excursions */}
-        <div id="excursions" className="bg-white p-6 rounded-xl shadow-sm hidden">
+        <div
+          id="excursions"
+          className="bg-white p-6 rounded-xl shadow-sm hidden"
+        >
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-semibold text-lg">Scheduled Excursions</h3>
             <Map className="w-5 h-5 text-[#FFC107]" />

@@ -15,6 +15,9 @@ import ReflectionsAndFeedback from "./pages/ReflectionsAndFeedback";
 import ParentalControlPrivacy from "./pages/ParentalControlPrivacy";
 import ParentResources from "./pages/ParentResources";
 import PaymentVerify from "./pages/PaymentVerify";
+import PaymentPage from "./pages/PaymentPage";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import SubscriptionManagement from "./pages/Subscription";
 
 const App = () => (
   <ThemeProvider>
@@ -25,6 +28,11 @@ const App = () => (
             <Route path="home" element={<Home />} />
             <Route path="add-child" element={<AddChild />} />
             <Route path="/payment-verify" element={<PaymentVerify />} />
+            <Route path="/payment/:childTempId" element={<PaymentPage />} />
+            <Route
+              path="/payment-success/:childTempId"
+              element={<PaymentSuccess />}
+            />
             <Route path="business-tools" element={<NotFound />} />
             <Route path="support" element={<NotFound />} />
             <Route path="more" element={<NotFound />} />
@@ -49,6 +57,10 @@ const App = () => (
             <Route
               path="parental-controls"
               element={<ParentalControlPrivacy />}
+            />
+            <Route
+              path="subscription-management"
+              element={<SubscriptionManagement />}
             />
             <Route path="parent-resources" element={<ParentResources />} />
             <Route path="*" element={<NotFound />} />

@@ -172,7 +172,7 @@ const Header = () => {
         "Content-type": "application/json; charset=UTF-8",
       },
     });
-    console.log(data);
+    // console.log(data);
     return data;
   };
   const {
@@ -213,16 +213,16 @@ const Header = () => {
         </Link>
       </div>
 
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center md:space-x-3">
         {/* Notification Menu */}
         <Menu as="div" className="relative ml-3">
           <div>
             <MenuButton className="flex rounded-full text-sm focus:outline-none">
               <span className="sr-only">Open user menu</span>
               <div className="relative">
-                <div className="absolute -top-1 -right-1 w-4.5 h-4.5 rounded-full bg-red-500 flex items-center justify-center text-white text-xs">
+                {/* <div className="absolute -top-1 -right-1 w-4.5 h-4.5 rounded-full bg-red-500 flex items-center justify-center text-white text-xs">
                   92
-                </div>
+                </div> */}
                 <Bell className="h-6 w-6 text-gray-700" />
               </div>
             </MenuButton>
@@ -348,7 +348,7 @@ const Header = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold">
+                    <h3 className="md:text-lg md:font-semibold">
                       {userData?.firstName + " " + userData?.lastName}
                     </h3>
                     <p className="text-sm text-gray-500">

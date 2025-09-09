@@ -18,6 +18,7 @@ import {
   Facebook,
   Twitter,
   Instagram,
+  Linkedin,
 } from "lucide-react";
 import { PageMetadata } from "../components/PageMetadata";
 import Logo from "../assets/logo.svg";
@@ -90,9 +91,9 @@ const LandingPage = () => {
                 >
                   Get Started
                 </Link>
-                <button className="md:hidden text-white">
+                {/* <button className="md:hidden text-white">
                   <Menu className="w-6 h-6" />
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
@@ -123,14 +124,27 @@ const LandingPage = () => {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                  <button className="bg-[#1A73E8] hover:bg-[#1557B0] text-white px-8 py-4 rounded-full font-bold text-lg transition-all transform hover:scale-105 glow-pulse">
+                  <Link
+                    to="/signin"
+                    className="bg-[#1A73E8] hover:bg-[#1557B0] text-white px-8 py-4 rounded-full font-bold text-lg transition-all transform hover:scale-105 glow-pulse"
+                  >
                     <Rocket className="w-5 h-5 mr-3 inline" />
                     Start Your Child's Journey
-                  </button>
-                  <button className="bg-white border-2 border-[#1A73E8] text-[#1A73E8] hover:bg-[#1A73E8] hover:text-white px-8 py-4 rounded-full font-bold text-lg transition-all">
+                  </Link>
+                  {/* <button className="bg-white border-2 border-[#1A73E8] text-[#1A73E8] hover:bg-[#1A73E8] hover:text-white px-8 py-4 rounded-full font-bold text-lg transition-all">
                     <Play className="w-5 h-5 mr-3 inline" />
                     Watch Demo
-                  </button>
+                  </button> */}
+                  <a
+                    href="https://quiz.wekraft.co"
+                    target="_blank"
+                    className="bg-white border-2 border-[#1A73E8] text-[#1A73E8] hover:bg-[#1A73E8] hover:text-white px-8 py-4 rounded-full font-bold text-lg transition-all"
+                  >
+                    {/* <button className="bg-white border-2 border-[#1A73E8] text-[#1A73E8] hover:bg-[#1A73E8] hover:text-white px-8 py-4 rounded-full font-bold text-lg transition-all"> */}
+                    <Rocket className="w-5 h-5 mr-2 inline" />
+                    Start Free Assessment
+                    {/* </button> */}
+                  </a>
                 </div>
 
                 <div className="flex items-center gap-6 text-sm text-gray-600">
@@ -421,10 +435,15 @@ const LandingPage = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white text-[#1A73E8] px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors shadow-lg">
+              <a
+                href="https://quiz.wekraft.co"
+                target="_blank"
+                className="bg-white text-[#1A73E8] px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors shadow-lg"
+              >
                 <Rocket className="w-5 h-5 mr-2 inline" />
                 Start Free Assessment
-              </button>
+              </a>
+
               {/* <button className="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-[#1A73E8] transition-colors">
                 <Calendar className="w-5 h-5 mr-2 inline" />
                 Schedule Demo
@@ -445,7 +464,7 @@ const LandingPage = () => {
               <div>
                 <div className="flex items-center gap-2 mb-6">
                   <div className="w-14 rounded-full flex items-center justify-center">
-                   <img src={Logo} />
+                    <img src={Logo} />
                   </div>
                   <span className="text-2xl font-bold">SkillSeed</span>
                 </div>
@@ -492,7 +511,7 @@ const LandingPage = () => {
                     <Facebook className="w-4 h-4" />
                   </span>
                   <span className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#FFC107] transition-colors cursor-pointer">
-                    <Twitter className="w-4 h-4" />
+                    <Linkedin className="w-4 h-4" />
                   </span>
                   <span className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#FFC107] transition-colors cursor-pointer">
                     <Instagram className="w-4 h-4" />
@@ -503,7 +522,7 @@ const LandingPage = () => {
 
             <div className="border-t border-white/20 pt-8 text-center text-gray-300 text-sm">
               <p>
-                &copy; 2024 SkillSeed by WeKraft Limited. All rights reserved.
+                &copy; 2025 SkillSeed by WeKraft Limited. All rights reserved.
               </p>
             </div>
           </div>
