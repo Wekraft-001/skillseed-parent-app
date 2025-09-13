@@ -362,6 +362,7 @@ const AddChild = () => {
       formDataToSend.append("age", formData.age);
       formDataToSend.append("grade", formData.grade);
       formDataToSend.append("password", formData.password);
+      formDataToSend.append("plainPassword", formData.password);
       formDataToSend.append("role", "student");
 
       if (image) {
