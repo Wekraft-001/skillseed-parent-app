@@ -485,9 +485,9 @@ const AddChild = () => {
                     name="age"
                     value={formData.age}
                     onChange={handleInputChange}
-                    placeholder="6-17"
+                    placeholder="6-18"
                     min="6"
-                    max="17"
+                    max="18"
                     className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-600"
                     required
                   />

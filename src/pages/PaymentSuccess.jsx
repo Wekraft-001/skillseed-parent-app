@@ -114,13 +114,20 @@ const PaymentSuccess = () => {
           } else {
             setMessage(errorMsg);
           }
+          setStatus("error");
         } else if (error.response?.status === 404) {
           setMessage(
             "Registration session expired. Please start the registration process again."
           );
+          setStatus("error");
+        } else if (error.response?.status) {
+          setMessage(
+            "We encountered an error while completing registertion. Please contact support"
+          );
+          setStatus("error");
         } else {
           setMessage(
-            "An error occurred while completing registration. Please contact support."
+            "An unexpected error occurred. Please check your connection and try again."
           );
         }
 

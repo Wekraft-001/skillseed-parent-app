@@ -166,7 +166,7 @@ const Header = () => {
   };
 
   const fetchUserDetails = async () => {
-    const { data } = await axios.get(`${apiURL}/users/me`, {
+    const { data } = await axios.get(`${apiURL}/auth/profile`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-type": "application/json; charset=UTF-8",
@@ -236,7 +236,7 @@ const Header = () => {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <MenuItems className="absolute right-0 z-50 mt-2 w-[320px] origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none font-primaryRegular">
+            <MenuItems className="absolute right-0 z-50 mt-2 w-[320px] origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none font-primaryRegular hidden">
               <MenuItem>
                 <div className="p-4 pb-2 flex justify-between items-center border-b">
                   <h3 className="text-xl font-bold">Notifications</h3>

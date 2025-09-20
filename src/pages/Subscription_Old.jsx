@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
 import {
   User,
   CreditCard,
@@ -24,171 +22,118 @@ import {
 } from "lucide-react";
 
 const SubscriptionManagement = () => {
-  const apiURL = import.meta.env.VITE_REACT_APP_BASE_URL;
-  const token = localStorage.getItem("parentToken");
   const [activeTab, setActiveTab] = useState("account");
-  const [updateAccount, setUpdateAccount] = useState({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [selectedChild, setSelectedChild] = useState(null);
-  const [showCancelModal, setShowCancelModal] = useState(false);
-  const [showRenewModal, setShowRenewModal] = useState(false);
-  const [showModifyModal, setShowModifyModal] = useState(false);
+
+  // Account Information State
+  const [accountInfo, setAccountInfo] = useState({
+    firstName: "John",
+    lastName: "Doe",
+    email: "john.doe@example.com",
+    phone: "+250788123456",
+  });
+
+  // Password Change State
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
 
-  const fetchAccountInfo = async () => {
-    const { data } = await axios.get(`${apiURL}/auth/profile`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    });
-    return data;
-  };
-
-  const {
-    data: accountInfo,
-    isLoading: userLoading,
-    isError: userError,
-  } = useQuery({
-    queryKey: ["account-info"],
-    queryFn: fetchAccountInfo,
-    enabled: !!token,
-    staleTime: 5 * 60 * 1000,
+  // Notification Settings State
+  const [notificationSettings, setNotificationSettings] = useState({
+    emailNotifications: true,
+    smsNotifications: false,
+    subscriptionReminders: true,
+    paymentNotifications: true,
+    childProgressUpdates: true,
   });
 
-  const fetchSubscriptions = async () => {
-    const { data } = await axios.get(
-      `${apiURL}/parent/dashboard/subscriptions`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      }
-    );
-    console.log(data.subscriptions);
-    return data.subscriptions;
-  };
-
-  const { data: subscriptions = [] } = useQuery({
-    queryKey: ["subscriptions"],
-    queryFn: fetchSubscriptions,
-    enabled: !!token,
-    staleTime: 5 * 60 * 1000,
-  });
-
-  // Transform API subscription data to match component structure
-  const transformSubscriptionData = (subscriptions) => {
-    return subscriptions.map((sub) => ({
-      id: sub._id,
-      name: `${sub.child.firstName} ${sub.child.lastName}`.trim(),
-      age: sub.child.age,
-      grade: `Grade ${sub.child.grade}`,
-      image:
-        sub.child.image ||
-        `https://via.placeholder.com/60x60/3B82F6/FFFFFF?text=${sub.child.firstName.charAt(
-          0
-        )}${sub.child.lastName.charAt(0)}`,
+  // Children and Subscriptions State
+  const [children, setChildren] = useState([
+    {
+      id: 1,
+      name: "Alice Doe",
+      age: 12,
+      grade: "Grade 7",
+      image: "https://via.placeholder.com/60x60/3B82F6/FFFFFF?text=AD",
       subscription: {
-        id: sub._id,
-        status: getSubscriptionStatus(sub),
-        plan: getPlanName(sub.amount, sub.currency),
-        amount: sub.amount,
-        currency: sub.currency,
-        startDate: sub.startDate,
-        endDate: sub.endDate,
-        nextBilling: sub.endDate,
-        autoRenew: sub.isActive,
-        paymentMethod: getPaymentMethodName(sub.payment_options),
-        daysLeft: calculateDaysLeft(sub.endDate),
-        paymentStatus: sub.paymentStatus,
-        maxChildren: sub.maxChildren,
+        id: "sub_001",
+        status: "active",
+        plan: "Monthly Premium",
+        amount: 15000,
+        currency: "RWF",
+        startDate: "2024-08-01",
+        endDate: "2024-09-01",
+        nextBilling: "2024-09-01",
+        autoRenew: true,
+        paymentMethod: "Mobile Money",
+        daysLeft: 22,
       },
-    }));
-  };
-
-  const getSubscriptionStatus = (subscription) => {
-    if (!subscription.isActive || subscription.deletedAt) {
-      return "cancelled";
-    }
-
-    const endDate = new Date(subscription.endDate);
-    const now = new Date();
-    const daysLeft = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
-
-    if (daysLeft <= 0) {
-      return "expired";
-    } else if (daysLeft <= 7) {
-      return "expiring_soon";
-    } else {
-      return "active";
-    }
-  };
-
-  const getPlanName = (amount, currency) => {
-    const monthlyPlans = {
-      USD: {
-        50: "Monthly Premium",
-        30: "Monthly Basic",
-        25: "Monthly Starter",
+    },
+    {
+      id: 2,
+      name: "Bob Doe",
+      age: 9,
+      grade: "Grade 4",
+      image: "https://via.placeholder.com/60x60/10B981/FFFFFF?text=BD",
+      subscription: {
+        id: "sub_002",
+        status: "expiring_soon",
+        plan: "Monthly Basic",
+        amount: 10000,
+        currency: "RWF",
+        startDate: "2024-08-01",
+        endDate: "2024-09-03",
+        nextBilling: "2024-09-03",
+        autoRenew: false,
+        paymentMethod: "Credit Card",
+        daysLeft: 3,
       },
-      RWF: {
-        15000: "Monthly Premium",
-        10000: "Monthly Basic",
-        7500: "Monthly Starter",
+    },
+    {
+      id: 3,
+      name: "Carol Doe",
+      age: 15,
+      grade: "Grade 10",
+      image: "https://via.placeholder.com/60x60/F59E0B/FFFFFF?text=CD",
+      subscription: {
+        id: "sub_003",
+        status: "cancelled",
+        plan: "Monthly Premium",
+        amount: 15000,
+        currency: "RWF",
+        startDate: "2024-07-01",
+        endDate: "2024-08-15",
+        nextBilling: null,
+        autoRenew: false,
+        paymentMethod: "Mobile Money",
+        daysLeft: 0,
       },
-    };
+    },
+  ]);
 
-    return (
-      monthlyPlans[currency]?.[amount] || `Monthly Plan (${amount} ${currency})`
-    );
-  };
-
-  const getPaymentMethodName = (paymentOption) => {
-    const paymentMethods = {
-      card: "Credit Card",
-      mobile_money: "Mobile Money",
-      bank_transfer: "Bank Transfer",
-    };
-
-    return paymentMethods[paymentOption] || "Credit Card";
-  };
-
-  const calculateDaysLeft = (endDate) => {
-    const end = new Date(endDate);
-    const now = new Date();
-    const diffTime = end - now;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return Math.max(0, diffDays);
-  };
-
-  // Transform subscriptions data
-  const children = transformSubscriptionData(subscriptions);
+  const [selectedChild, setSelectedChild] = useState(null);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showRenewModal, setShowRenewModal] = useState(false);
+  const [showModifyModal, setShowModifyModal] = useState(false);
 
   const handleAccountUpdate = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       // API call to update account info
-      await axios.put(`${apiURL}/auth/profile`, updateAccount, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      });
-      setLoading(false);
-      alert("Account information updated successfully!");
+      // await updateAccountInfo(accountInfo);
+      setTimeout(() => {
+        setLoading(false);
+        alert("Account information updated successfully!");
+      }, 1500);
     } catch (error) {
       setLoading(false);
       alert("Failed to update account information. Please try again.");
-      console.error("Update error:", error);
     }
   };
 
@@ -205,30 +150,34 @@ const SubscriptionManagement = () => {
     setLoading(true);
     try {
       // API call to change password
-      await axios.put(
-        `${apiURL}/auth/change-password`,
-        {
-          currentPassword: passwordData.currentPassword,
-          newPassword: passwordData.newPassword,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-type": "application/json; charset=UTF-8",
-          },
-        }
-      );
-      setLoading(false);
-      setPasswordData({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
-      alert("Password changed successfully!");
+      // await changePassword(passwordData);
+      setTimeout(() => {
+        setLoading(false);
+        setPasswordData({
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        });
+        alert("Password changed successfully!");
+      }, 1500);
     } catch (error) {
       setLoading(false);
       alert("Failed to change password. Please check your current password.");
-      console.error("Password change error:", error);
+    }
+  };
+
+  const handleNotificationUpdate = async () => {
+    setLoading(true);
+    try {
+      // API call to update notification settings
+      // await updateNotificationSettings(notificationSettings);
+      setTimeout(() => {
+        setLoading(false);
+        alert("Notification settings updated successfully!");
+      }, 1000);
+    } catch (error) {
+      setLoading(false);
+      alert("Failed to update notification settings.");
     }
   };
 
@@ -236,25 +185,36 @@ const SubscriptionManagement = () => {
     setLoading(true);
     try {
       // API call to renew subscription
-      await axios.post(
-        `${apiURL}/parent/dashboard/subscriptions/${childId}/renew`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-type": "application/json; charset=UTF-8",
-          },
-        }
-      );
-      setLoading(false);
-      setShowRenewModal(false);
-      alert("Subscription renewed successfully!");
-      // Refetch subscriptions to get updated data
-      window.location.reload(); // Or use react-query's refetch
+      // await renewSubscription(childId);
+      setTimeout(() => {
+        setLoading(false);
+        setShowRenewModal(false);
+        alert("Subscription renewed successfully!");
+        // Update the child's subscription status
+        setChildren((prev) =>
+          prev.map((child) =>
+            child.id === childId
+              ? {
+                  ...child,
+                  subscription: {
+                    ...child.subscription,
+                    status: "active",
+                    endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                      .toISOString()
+                      .split("T")[0],
+                    nextBilling: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                      .toISOString()
+                      .split("T")[0],
+                    daysLeft: 30,
+                  },
+                }
+              : child
+          )
+        );
+      }, 2000);
     } catch (error) {
       setLoading(false);
       alert("Failed to renew subscription. Please try again.");
-      console.error("Renew error:", error);
     }
   };
 
@@ -262,24 +222,30 @@ const SubscriptionManagement = () => {
     setLoading(true);
     try {
       // API call to cancel subscription
-      await axios.delete(
-        `${apiURL}/parent/dashboard/subscriptions/${childId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-type": "application/json; charset=UTF-8",
-          },
-        }
-      );
-      setLoading(false);
-      setShowCancelModal(false);
-      alert("Subscription cancelled successfully!");
-      // Refetch subscriptions to get updated data
-      window.location.reload(); // Or use react-query's refetch
+      // await cancelSubscription(childId);
+      setTimeout(() => {
+        setLoading(false);
+        setShowCancelModal(false);
+        alert("Subscription cancelled successfully!");
+        // Update the child's subscription status
+        setChildren((prev) =>
+          prev.map((child) =>
+            child.id === childId
+              ? {
+                  ...child,
+                  subscription: {
+                    ...child.subscription,
+                    status: "cancelled",
+                    autoRenew: false,
+                  },
+                }
+              : child
+          )
+        );
+      }, 1500);
     } catch (error) {
       setLoading(false);
       alert("Failed to cancel subscription. Please try again.");
-      console.error("Cancel error:", error);
     }
   };
 
@@ -288,25 +254,26 @@ const SubscriptionManagement = () => {
     setLoading(true);
     try {
       // API call to toggle auto-renew
-      await axios.put(
-        `${apiURL}/parent/dashboard/subscriptions/${childId}/auto-renew`,
-        {
-          autoRenew: !child.subscription.autoRenew,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-type": "application/json; charset=UTF-8",
-          },
-        }
-      );
-      setLoading(false);
-      // Refetch subscriptions to get updated data
-      window.location.reload(); // Or use react-query's refetch
+      // await toggleAutoRenew(childId, !child.subscription.autoRenew);
+      setTimeout(() => {
+        setLoading(false);
+        setChildren((prev) =>
+          prev.map((c) =>
+            c.id === childId
+              ? {
+                  ...c,
+                  subscription: {
+                    ...c.subscription,
+                    autoRenew: !c.subscription.autoRenew,
+                  },
+                }
+              : c
+          )
+        );
+      }, 1000);
     } catch (error) {
       setLoading(false);
       alert("Failed to update auto-renewal setting.");
-      console.error("Auto-renew error:", error);
     }
   };
 
@@ -350,15 +317,10 @@ const SubscriptionManagement = () => {
   };
 
   const formatCurrency = (amount, currency) => {
-    const currencyMap = {
-      USD: "en-US",
-      RWF: "en-RW",
-    };
-
-    return new Intl.NumberFormat(currencyMap[currency] || "en-US", {
+    return new Intl.NumberFormat("en-RW", {
       style: "currency",
       currency: currency,
-      minimumFractionDigits: currency === "RWF" ? 0 : 2,
+      minimumFractionDigits: 0,
     }).format(amount);
   };
 
@@ -374,57 +336,7 @@ const SubscriptionManagement = () => {
         child.subscription.status === "active" ||
         child.subscription.status === "expiring_soon"
     )
-    .reduce((total, child) => {
-      // Convert to USD for total calculation if needed
-      let amount = child.subscription.amount;
-      if (child.subscription.currency === "RWF") {
-        amount = amount / 1450;
-      }
-      return total + amount;
-    }, 0);
-
-  useEffect(() => {
-    if (accountInfo) {
-      setUpdateAccount({
-        firstName: accountInfo.firstName || "",
-        lastName: accountInfo.lastName || "",
-        email: accountInfo.email || "",
-        phoneNumber: accountInfo.phoneNumber || "",
-      });
-    }
-  }, [accountInfo]);
-
-  // Show loading state while fetching data
-  if (userLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <Loader className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading your account information...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Show error state
-  if (userError) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <AlertTriangle className="w-12 h-12 text-red-600 mx-auto mb-4" />
-          <p className="text-red-600 mb-4">
-            Failed to load account information
-          </p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
+    .reduce((total, child) => total + child.subscription.amount, 0);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
@@ -488,7 +400,7 @@ const SubscriptionManagement = () => {
                     Monthly Total
                   </p>
                   <p className="text-white text-xl font-bold">
-                    ${totalSubscriptionValue.toFixed(2)}
+                    {formatCurrency(totalSubscriptionValue, "RWF")}
                   </p>
                 </div>
               </div>
@@ -505,6 +417,7 @@ const SubscriptionManagement = () => {
                   label: "Subscriptions",
                   icon: CreditCard,
                 },
+                { id: "notifications", label: "Notifications", icon: Bell },
                 { id: "security", label: "Security", icon: Lock },
               ].map(({ id, label, icon: Icon }) => (
                 <button
@@ -538,7 +451,7 @@ const SubscriptionManagement = () => {
                 </div>
 
                 <div className="bg-gray-50 rounded-xl p-6">
-                  <form onSubmit={handleAccountUpdate} className="space-y-6">
+                  <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -546,10 +459,10 @@ const SubscriptionManagement = () => {
                         </label>
                         <input
                           type="text"
-                          value={updateAccount.firstName || ""}
+                          value={accountInfo.firstName}
                           onChange={(e) =>
-                            setUpdateAccount({
-                              ...updateAccount,
+                            setAccountInfo({
+                              ...accountInfo,
                               firstName: e.target.value,
                             })
                           }
@@ -563,10 +476,10 @@ const SubscriptionManagement = () => {
                         </label>
                         <input
                           type="text"
-                          value={updateAccount.lastName || ""}
+                          value={accountInfo.lastName}
                           onChange={(e) =>
-                            setUpdateAccount({
-                              ...updateAccount,
+                            setAccountInfo({
+                              ...accountInfo,
                               lastName: e.target.value,
                             })
                           }
@@ -581,10 +494,10 @@ const SubscriptionManagement = () => {
                         </label>
                         <input
                           type="email"
-                          value={updateAccount.email || ""}
+                          value={accountInfo.email}
                           onChange={(e) =>
-                            setUpdateAccount({
-                              ...updateAccount,
+                            setAccountInfo({
+                              ...accountInfo,
                               email: e.target.value,
                             })
                           }
@@ -599,11 +512,11 @@ const SubscriptionManagement = () => {
                         </label>
                         <input
                           type="tel"
-                          value={updateAccount.phoneNumber || ""}
+                          value={accountInfo.phone}
                           onChange={(e) =>
-                            setUpdateAccount({
-                              ...updateAccount,
-                              phoneNumber: e.target.value,
+                            setAccountInfo({
+                              ...accountInfo,
+                              phone: e.target.value,
                             })
                           }
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
@@ -614,7 +527,7 @@ const SubscriptionManagement = () => {
 
                     <div className="flex justify-end">
                       <button
-                        type="submit"
+                        onClick={handleAccountUpdate}
                         disabled={loading}
                         className="flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
@@ -626,7 +539,7 @@ const SubscriptionManagement = () => {
                         {loading ? "Updating..." : "Update Account"}
                       </button>
                     </div>
-                  </form>
+                  </div>
                 </div>
               </div>
             )}
@@ -651,182 +564,256 @@ const SubscriptionManagement = () => {
                   </div>
                 </div>
 
-                {children.length === 0 ? (
-                  <div className="text-center py-12">
-                    <User className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No subscriptions found
-                    </h3>
-                    <p className="text-gray-600">
-                      You don't have any active subscriptions yet.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {children.map((child) => (
-                      <div
-                        key={child.id}
-                        className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
-                      >
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-center">
-                            <img
-                              src={child.image}
-                              alt={child.name}
-                              className="w-12 h-12 rounded-full mr-3 object-cover"
-                              onError={(e) => {
-                                e.target.src = `https://via.placeholder.com/60x60/3B82F6/FFFFFF?text=${child.name
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .join("")}`;
-                              }}
-                            />
-                            <div>
-                              <h3 className="text-lg font-semibold text-gray-900">
-                                {child.name}
-                              </h3>
-                              <p className="text-gray-600 text-sm">
-                                {child.grade} • Age {child.age}
-                              </p>
-                            </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {children.map((child) => (
+                    <div
+                      key={child.id}
+                      className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center">
+                          <img
+                            src={child.image}
+                            alt={child.name}
+                            className="w-12 h-12 rounded-full mr-3"
+                          />
+                          <div>
+                            <h3 className="text-lg font-semibold text-gray-900">
+                              {child.name}
+                            </h3>
+                            <p className="text-gray-600 text-sm">
+                              {child.grade} • Age {child.age}
+                            </p>
                           </div>
-                          <div
-                            className={`flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
-                              child.subscription.status
-                            )}`}
-                          >
-                            {getStatusIcon(child.subscription.status)}
-                            <span className="ml-1">
-                              {child.subscription.status
-                                .replace("_", " ")
-                                .toUpperCase()}
+                        </div>
+                        <div
+                          className={`flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
+                            child.subscription.status
+                          )}`}
+                        >
+                          {getStatusIcon(child.subscription.status)}
+                          <span className="ml-1">
+                            {child.subscription.status
+                              .replace("_", " ")
+                              .toUpperCase()}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3 mb-6">
+                        <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Plan:</span>
+                            <span className="font-medium">
+                              {child.subscription.plan}
                             </span>
                           </div>
-                        </div>
-
-                        <div className="space-y-3 mb-6">
-                          <div className="bg-gray-50 rounded-lg p-3 space-y-2">
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-600">Plan:</span>
-                              <span className="font-medium">
-                                {child.subscription.plan}
-                              </span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-600">Amount:</span>
-                              <span className="font-medium text-green-600">
-                                {formatCurrency(
-                                  child.subscription.amount,
-                                  child.subscription.currency
-                                )}
-                              </span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-600">
-                                Next Billing:
-                              </span>
-                              <span className="font-medium">
-                                {formatDate(child.subscription.nextBilling)}
-                              </span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-600">
-                                Payment Method:
-                              </span>
-                              <span className="font-medium">
-                                {child.subscription.paymentMethod}
-                              </span>
-                            </div>
-                            {child.subscription.daysLeft > 0 && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-gray-600">
-                                  Days Left:
-                                </span>
-                                <span
-                                  className={`font-medium ${
-                                    child.subscription.daysLeft <= 7
-                                      ? "text-red-600"
-                                      : "text-green-600"
-                                  }`}
-                                >
-                                  {child.subscription.daysLeft} days
-                                </span>
-                              </div>
-                            )}
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Amount:</span>
+                            <span className="font-medium text-green-600">
+                              {formatCurrency(
+                                child.subscription.amount,
+                                child.subscription.currency
+                              )}
+                            </span>
                           </div>
-
-                          {/* {child.subscription.status !== "cancelled" && (
-                            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                              <span className="text-sm font-medium text-blue-700">
-                                Auto-Renewal
-                              </span>
-                              <button
-                                onClick={() => toggleAutoRenew(child.id)}
-                                disabled={loading}
-                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                                  child.subscription.autoRenew
-                                    ? "bg-blue-600"
-                                    : "bg-gray-300"
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Next Billing:</span>
+                            <span className="font-medium">
+                              {formatDate(child.subscription.nextBilling)}
+                            </span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">
+                              Payment Method:
+                            </span>
+                            <span className="font-medium">
+                              {child.subscription.paymentMethod}
+                            </span>
+                          </div>
+                          {child.subscription.daysLeft > 0 && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-600">Days Left:</span>
+                              <span
+                                className={`font-medium ${
+                                  child.subscription.daysLeft <= 7
+                                    ? "text-red-600"
+                                    : "text-green-600"
                                 }`}
                               >
-                                <span
-                                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                                    child.subscription.autoRenew
-                                      ? "translate-x-6"
-                                      : "translate-x-1"
-                                  }`}
-                                />
-                              </button>
-                            </div>
-                          )} */}
-                        </div>
-
-                        <div className="space-y-2">
-                          {child.subscription.status === "expiring_soon" ||
-                          child.subscription.status === "expired" ||
-                          child.subscription.status === "cancelled" ? (
-                            <button
-                              onClick={() => {
-                                setSelectedChild(child);
-                                setShowRenewModal(true);
-                              }}
-                              disabled={loading}
-                              className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center justify-center text-sm font-medium transition-colors"
-                            >
-                              <RefreshCw className="w-4 h-4 mr-2" />
-                              Renew Subscription
-                            </button>
-                          ) : (
-                            <div className="grid grid-cols-2 gap-2">
-                              <button
-                                onClick={() => {
-                                  setSelectedChild(child);
-                                  setShowModifyModal(true);
-                                }}
-                                disabled={loading}
-                                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50 flex items-center justify-center text-sm transition-colors"
-                              >
-                                <Settings className="w-4 h-4 mr-1" />
-                                Modify
-                              </button>
-                              <button
-                                onClick={() => {
-                                  setSelectedChild(child);
-                                  setShowCancelModal(true);
-                                }}
-                                disabled={loading}
-                                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 flex items-center justify-center text-sm transition-colors"
-                              >
-                                <XCircle className="w-4 h-4 mr-1" />
-                                Cancel
-                              </button>
+                                {child.subscription.daysLeft} days
+                              </span>
                             </div>
                           )}
                         </div>
+
+                        {child.subscription.status !== "cancelled" && (
+                          <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                            <span className="text-sm font-medium text-blue-700">
+                              Auto-Renewal
+                            </span>
+                            <button
+                              onClick={() => toggleAutoRenew(child.id)}
+                              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                                child.subscription.autoRenew
+                                  ? "bg-blue-600"
+                                  : "bg-gray-300"
+                              }`}
+                            >
+                              <span
+                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                  child.subscription.autoRenew
+                                    ? "translate-x-6"
+                                    : "translate-x-1"
+                                }`}
+                              />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        {child.subscription.status === "expiring_soon" ||
+                        child.subscription.status === "expired" ||
+                        child.subscription.status === "cancelled" ? (
+                          <button
+                            onClick={() => {
+                              setSelectedChild(child);
+                              setShowRenewModal(true);
+                            }}
+                            className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center justify-center text-sm font-medium transition-colors"
+                          >
+                            <RefreshCw className="w-4 h-4 mr-2" />
+                            Renew Subscription
+                          </button>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-2">
+                            <button
+                              onClick={() => {
+                                setSelectedChild(child);
+                                setShowModifyModal(true);
+                              }}
+                              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center justify-center text-sm transition-colors"
+                            >
+                              <Settings className="w-4 h-4 mr-1" />
+                              Modify
+                            </button>
+                            <button
+                              onClick={() => {
+                                setSelectedChild(child);
+                                setShowCancelModal(true);
+                              }}
+                              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center justify-center text-sm transition-colors"
+                            >
+                              <XCircle className="w-4 h-4 mr-1" />
+                              Cancel
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Notifications Tab */}
+            {activeTab === "notifications" && (
+              <div className="space-y-8">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    Notification Settings
+                  </h2>
+                  <p className="text-gray-600">
+                    Choose how you want to be notified about important updates
+                  </p>
+                </div>
+
+                <div className="bg-gray-50 rounded-xl p-6">
+                  <div className="space-y-6">
+                    {Object.entries({
+                      emailNotifications: {
+                        title: "Email Notifications",
+                        description: "Receive notifications via email",
+                        icon: Mail,
+                      },
+                      smsNotifications: {
+                        title: "SMS Notifications",
+                        description: "Receive notifications via SMS",
+                        icon: Phone,
+                      },
+                      subscriptionReminders: {
+                        title: "Subscription Reminders",
+                        description: "Get reminded about subscription renewals",
+                        icon: Calendar,
+                      },
+                      paymentNotifications: {
+                        title: "Payment Notifications",
+                        description: "Get notified about payment transactions",
+                        icon: CreditCard,
+                      },
+                      childProgressUpdates: {
+                        title: "Child Progress Updates",
+                        description:
+                          "Receive updates about your child's progress",
+                        icon: User,
+                      },
+                    }).map(([key, config]) => (
+                      <div
+                        key={key}
+                        className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-200"
+                      >
+                        <div className="flex items-center">
+                          <config.icon className="w-5 h-5 text-gray-500 mr-3" />
+                          <div>
+                            <h3 className="font-medium text-gray-900">
+                              {config.title}
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                              {config.description}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() =>
+                            setNotificationSettings({
+                              ...notificationSettings,
+                              [key]: !notificationSettings[key],
+                            })
+                          }
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                            notificationSettings[key]
+                              ? "bg-blue-600"
+                              : "bg-gray-300"
+                          }`}
+                        >
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                              notificationSettings[key]
+                                ? "translate-x-6"
+                                : "translate-x-1"
+                            }`}
+                          />
+                        </button>
                       </div>
                     ))}
+
+                    <div className="flex justify-end pt-4">
+                      <button
+                        onClick={handleNotificationUpdate}
+                        disabled={loading}
+                        className="flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        {loading ? (
+                          <Loader className="w-5 h-5 animate-spin mr-2" />
+                        ) : (
+                          <Save className="w-5 h-5 mr-2" />
+                        )}
+                        {loading ? "Saving..." : "Save Settings"}
+                      </button>
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
             )}
 
@@ -843,10 +830,7 @@ const SubscriptionManagement = () => {
                 </div>
 
                 <div className="bg-gray-50 rounded-xl p-6">
-                  <form
-                    onSubmit={handlePasswordChange}
-                    className="max-w-md space-y-6"
-                  >
+                  <div className="max-w-md space-y-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         <Shield className="w-4 h-4 inline mr-2" />
@@ -860,39 +844,6 @@ const SubscriptionManagement = () => {
                             setPasswordData({
                               ...passwordData,
                               currentPassword: e.target.value,
-                            })
-                          }
-                          className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                          placeholder="Enter your current password"
-                          required
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                        >
-                          {showPassword ? (
-                            <EyeOff className="w-5 h-5" />
-                          ) : (
-                            <Eye className="w-5 h-5" />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        <Lock className="w-4 h-4 inline mr-2" />
-                        New Password
-                      </label>
-                      <div className="relative">
-                        <input
-                          type={showNewPassword ? "text" : "password"}
-                          value={passwordData.newPassword}
-                          onChange={(e) =>
-                            setPasswordData({
-                              ...passwordData,
-                              newPassword: e.target.value,
                             })
                           }
                           className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
@@ -955,7 +906,7 @@ const SubscriptionManagement = () => {
 
                     <div className="flex justify-end">
                       <button
-                        type="submit"
+                        onClick={handlePasswordChange}
                         disabled={loading}
                         className="flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
@@ -967,7 +918,7 @@ const SubscriptionManagement = () => {
                         {loading ? "Updating..." : "Change Password"}
                       </button>
                     </div>
-                  </form>
+                  </div>
                 </div>
               </div>
             )}
@@ -1018,8 +969,7 @@ const SubscriptionManagement = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowRenewModal(false)}
-                disabled={loading}
-                className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50 font-medium transition-colors"
+                className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors"
               >
                 Cancel
               </button>
@@ -1074,8 +1024,7 @@ const SubscriptionManagement = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowCancelModal(false)}
-                disabled={loading}
-                className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50 font-medium transition-colors"
+                className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors"
               >
                 Keep Subscription
               </button>
@@ -1123,18 +1072,12 @@ const SubscriptionManagement = () => {
                   {[
                     {
                       name: "Monthly Basic",
-                      price:
-                        selectedChild.subscription.currency === "USD"
-                          ? 30
-                          : 10000,
+                      price: 10000,
                       features: ["Basic features", "Email support"],
                     },
                     {
                       name: "Monthly Premium",
-                      price:
-                        selectedChild.subscription.currency === "USD"
-                          ? 50
-                          : 15000,
+                      price: 15000,
                       features: [
                         "All features",
                         "Priority support",
@@ -1143,10 +1086,7 @@ const SubscriptionManagement = () => {
                     },
                     {
                       name: "Annual Premium",
-                      price:
-                        selectedChild.subscription.currency === "USD"
-                          ? 500
-                          : 150000,
+                      price: 150000,
                       features: [
                         "All features",
                         "Priority support",
@@ -1167,10 +1107,7 @@ const SubscriptionManagement = () => {
                           {plan.name}
                         </h5>
                         <span className="font-bold text-green-600">
-                          {formatCurrency(
-                            plan.price,
-                            selectedChild.subscription.currency
-                          )}
+                          {formatCurrency(plan.price, "RWF")}
                         </span>
                       </div>
                       <ul className="text-sm text-gray-600">
@@ -1209,8 +1146,7 @@ const SubscriptionManagement = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowModifyModal(false)}
-                disabled={loading}
-                className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50 font-medium transition-colors"
+                className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors"
               >
                 Cancel
               </button>
@@ -1222,8 +1158,7 @@ const SubscriptionManagement = () => {
                     "Plan modification functionality will redirect to payment page"
                   );
                 }}
-                disabled={loading}
-                className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center font-medium transition-colors"
+                className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center font-medium transition-colors"
               >
                 <Settings className="w-4 h-4 mr-2" />
                 Update Plan

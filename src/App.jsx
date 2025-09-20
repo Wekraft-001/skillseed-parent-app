@@ -3,7 +3,7 @@ import Signin from "./pages/Signin";
 import DashboardRoute from "./DashboardRoute";
 import Signup from "./pages/Signup";
 import AuthCallback from "./pages/AuthCallback";
-import LandingPage from "./pages/LandinPage";
+import LandingPage from "./pages/LandingPage";
 
 function App() {
   return (

@@ -30,9 +30,7 @@
 @theme {
   /* FONT FAMILY */
   --font-cocon: "Cocon", sans-serif;
-
   --font-nexa: "nexaround", sans-serif;
-
   --font-nunito: "Nunito", sans-serif;
 
   /* BREAK POINTS */
@@ -40,15 +38,83 @@
 
   /* COLORS */
   --color-primary-blue: #1a73e8;
-
   --color-accent-yellow: #ffc107;
-
   --color-soft-gray: #f5f7fa;
-
   --color-primary: 217, 90%, 54%;
   --primary-foreground: 0, 0%, 100%;
 
+  /* Define border and background colors */
+  --color-border: 214.3, 31.8%, 91.4%;
+  --color-background: 0, 0%, 100%;
+  --color-foreground: 222.2, 84%, 4.9%;
+
+  /* Animation easings */
   --ease-fluid: cubic-bezier(0.3, 0, 0, 1);
   --ease-snappy: cubic-bezier(0.2, 0, 0, 1);
-  /* ... */
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--color-border));
+  }
+
+  body {
+    background-color: hsl(var(--color-background));
+    color: hsl(var(--color-foreground));
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Landing page animations */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes bubble-float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(180deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px hsl(var(--color-primary) / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px hsl(var(--color-primary) / 0.6);
+  }
+}
+
+.bubble {
+  animation: bubble-float 3s ease-in-out infinite;
+}
+
+.bubble:nth-child(2) {
+  animation-delay: 1s;
+}
+
+.bubble:nth-child(3) {
+  animation-delay: 2s;
+}
+
+.glow-pulse {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #1a73e8 0%, #4caf50 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

@@ -111,22 +111,22 @@ const LandingPage = () => {
                   </span>
                 </div>
 
-                <h1 className="text-3xl md:text-5xl font-bold text-[#212121] mb-6">
+                <h1 className="text-3xl md:text-5xl font-bold text-[#212121]">
                   Give Your Child the
-                  <span className="gradient-text"> Future</span>
+                  <span className="gradient-text"> Future </span>
                   They Deserve
                 </h1>
 
-                <p className="text-lg text-gray-600 mb-8 max-w-lg">
+                <p className="text-lg text-gray-600 my-3 max-w-lg leading-8">
                   SkillSeed transforms learning into an exciting adventure.
                   Watch your child discover their unique talents and build
                   skills for tomorrow's world.
                 </p>
 
-                <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                <div className="flex flex-col sm:flex-row gap-4 mb-4">
                   <Link
                     to="/signin"
-                    className="bg-[#1A73E8] hover:bg-[#1557B0] text-white px-8 py-4 rounded-full font-bold text-lg transition-all transform hover:scale-105 glow-pulse"
+                    className="bg-[#1A73E8] hover:bg-[#1557B0] text-white rounded-full font-bold text-lg transition-all transform hover:scale-105 glow-pulse flex items-center justify-center py-4 md:px-4 md:py-0"
                   >
                     <Rocket className="w-5 h-5 mr-3 inline" />
                     Start Your Child's Journey
@@ -175,7 +175,7 @@ const LandingPage = () => {
         </section>
 
         {/* Stats Section */}
-        <section className="py-16 bg-white relative z-10">
+        <section className="py-10 bg-white relative z-10">
           <div className="container mx-auto px-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               <div className="text-center">
@@ -207,10 +207,10 @@ const LandingPage = () => {
         </section>
 
         {/* Features Section */}
-        <section className="py-20 relative z-10">
+        <section className="py-10 relative z-10">
           <div className="container mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-[#212121] mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold text-[#212121] mb-6">
                 Why Parents Choose{" "}
                 <span className="gradient-text">SkillSeed</span>
               </h2>
@@ -327,10 +327,10 @@ const LandingPage = () => {
         </section>
 
         {/* Testimonials Section */}
-        <section className="py-20 bg-white relative z-10">
+        <section className="py-10 bg-white relative z-10">
           <div className="container mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-[#212121] mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold text-[#212121] mb-6">
                 What Parents Are Saying
               </h2>
               <p className="text-xl text-gray-600">
@@ -416,7 +416,7 @@ const LandingPage = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-r from-[#1A73E8] to-[#4CAF50] relative overflow-hidden">
+        <section className="py-10 bg-gradient-to-r from-[#1A73E8] to-[#4CAF50] relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full animate-float"></div>
             <div
@@ -426,7 +426,7 @@ const LandingPage = () => {
           </div>
 
           <div className="container mx-auto px-6 text-center relative z-10">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
               Ready to Unlock Your Child's Potential?
             </h2>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">

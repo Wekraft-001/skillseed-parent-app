@@ -13,6 +13,7 @@ import {
   Bot,
   Lightbulb,
   User,
+  UserPlus,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -20,87 +21,26 @@ const Home = () => {
   const apiURL = import.meta.env.VITE_REACT_APP_BASE_URL;
   const token = localStorage.getItem("parentToken");
   const navigate = useNavigate();
-  const [selectedChild, setSelectedChild] = useState("emma");
-
-  // Mock data for children
-  const childrenData = {
-    emma: {
-      id: "emma",
-      name: "Emma Johnson",
-      age: 12,
-      avatar:
-        "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg",
-      interests: ["Science", "Technology", "Robotics"],
-      skills: ["Problem Solving", "Creativity", "Coding"],
-      dreamJob: "Software Engineer",
-      completedActivities: ["Intro to Coding", "Math Basics", "Science Fair"],
-      inProgressActivities: ["AI Basics", "Robotics 101"],
-      upcomingSessions: [
-        {
-          mentor: "Dr. Michael Brown",
-          time: "Tomorrow, 3:00 PM",
-          avatar:
-            "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-8.jpg",
-        },
-      ],
-      scheduledExcursions: [
-        {
-          title: "Tech Museum Visit",
-          date: "Jun 15, 2025",
-          location: "City Science Center",
-        },
-      ],
-    },
-    tom: {
-      id: "tom",
-      name: "Tom Johnson",
-      age: 9,
-      avatar:
-        "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg",
-      interests: ["Art", "Music", "Nature"],
-      skills: ["Drawing", "Creativity", "Teamwork"],
-      dreamJob: "Artist",
-      completedActivities: ["Art Basics", "Music Theory"],
-      inProgressActivities: ["Painting Techniques", "Guitar Lessons"],
-      upcomingSessions: [
-        {
-          mentor: "Ms. Sarah Wilson",
-          time: "Friday, 2:00 PM",
-          avatar:
-            "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-9.jpg",
-        },
-      ],
-      scheduledExcursions: [
-        {
-          title: "Art Gallery Tour",
-          date: "Jun 20, 2025",
-          location: "Modern Art Museum",
-        },
-      ],
-    },
-  };
-
-  const currentChild = childrenData[selectedChild];
+  const [selectedChild, setSelectedChild] = useState(null);
 
   const handleViewProfile = (childId) => {
     navigate(`/child-career-profile/${childId}`);
   };
 
   const fetchUserDetails = async () => {
-    const { data } = await axios.get(`${apiURL}/users/me`, {
+    const { data } = await axios.get(`${apiURL}/auth/profile`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-type": "application/json; charset=UTF-8",
       },
     });
-    console.log(data);
     return data;
   };
+
   const {
     data: userData,
-    isLoading,
-    isError,
-    error,
+    isLoading: userLoading,
+    isError: userError,
   } = useQuery({
     queryKey: ["userDetails-home"],
     queryFn: fetchUserDetails,
@@ -115,26 +55,125 @@ const Home = () => {
         "Content-type": "application/json; charset=UTF-8",
       },
     });
-    console.log(data);
+    console.log(data, "children info");
     return data;
   };
+
   const {
     data: children = [],
-    // isLoading,
-    // isError,
-    // error,
+    isLoading: childrenLoading,
+    isError: childrenError,
   } = useQuery({
     queryKey: ["my-children-home"],
     queryFn: fetchMyChildren,
     enabled: !!token,
     staleTime: 5 * 60 * 1000,
   });
+
+  // Set first child as selected when children data is loaded
+  React.useEffect(() => {
+    if (children.length > 0 && !selectedChild) {
+      setSelectedChild(children[0].id || children[0]._id);
+    }
+  }, [children, selectedChild]);
+
+  const currentChild = selectedChild
+    ? children.find((child) => (child.id || child._id) === selectedChild)
+    : null;
+
+  // Loading state
+  if (userLoading || childrenLoading) {
+    return (
+      <div className="bg-[#F5F7FA] min-h-[800px] p-6 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#1A73E8] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (userError || childrenError) {
+    return (
+      <div className="bg-[#F5F7FA] min-h-[800px] p-6 flex items-center justify-center">
+        <div className="text-center bg-white p-8 rounded-xl shadow-sm max-w-md">
+          <div className="text-red-500 mb-4">
+            <svg
+              className="w-16 h-16 mx-auto"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold mb-2">Something went wrong</h3>
+          <p className="text-gray-600 mb-4">
+            We couldn't load your dashboard. Please try refreshing the page.
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-[#1A73E8] text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+          >
+            Refresh Page
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // No children state
+  if (children.length === 0) {
+    return (
+      <div className="bg-[#F5F7FA] min-h-[800px] p-6">
+        {/* Welcome Message */}
+        <div className="mb-8">
+          <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2">
+            Welcome, {userData?.firstName || "Parent"}
+          </h1>
+          <p className="text-gray-600">
+            Get started by adding your first child to track their learning
+            journey.
+          </p>
+        </div>
+
+        {/* Empty state */}
+        <div className="flex flex-col items-center justify-center min-h-[400px] bg-white rounded-xl shadow-sm">
+          <div className="text-center max-w-md">
+            <UserPlus className="w-10 h-10 md:w-20 md:h-20 text-gray-300 mx-auto mb-6" />
+            <h3 className="md:text-xl font-semibold text-gray-900 mb-2">
+              No Children Added Yet
+            </h3>
+            <p className="text-sm md:text-base text-gray-600 mb-6 px-4">
+              Start your child's learning journey by adding them to your
+              account. You'll be able to track their progress, schedule
+              mentorship sessions, and much more.
+            </p>
+            <button
+              onClick={() => navigate("/add-child")}
+              className="bg-[#3C91BA] text-white px-6 py-3 rounded-lg hover:bg-[#3C91BA] transition-colors flex items-center gap-2 mx-auto font-semibold"
+            >
+              <Plus className="w-5 h-5" />
+              Add Your First Child
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-[#F5F7FA] min-h-[800px] p-6">
       {/* Welcome Message */}
       <div className="mb-8">
         <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2">
-          Welcome, {userData?.firstName}
+          Welcome, {userData?.firstName || "Parent"}
         </h1>
         <p className="text-gray-600">
           Track your child's learning journey and stay updated on their
@@ -144,39 +183,61 @@ const Home = () => {
 
       {/* Child Selector */}
       <div id="child-selector" className="mb-8 flex flex-col md:flex-row gap-4">
-        {Object.values(childrenData).map((child) => (
-          <div
-            key={child.id}
-            className={`bg-white p-4 rounded-xl flex flex-col gap-3 shadow-sm cursor-pointer transition-all ${
-              selectedChild === child.id
-                ? "border-2 border-[#1A73E8]"
-                : "border border-gray-200"
-            }`}
-            onClick={() => setSelectedChild(child.id)}
-          >
-            <div className="flex items-center gap-4">
-              <img
-                src={child.avatar}
-                className="w-12 h-12 rounded-full object-cover"
-                alt={`${child.name}'s avatar`}
-              />
-              <div>
-                <h3 className="font-semibold">{child.name}</h3>
-                <p className="text-sm text-gray-500">Age {child.age}</p>
-              </div>
-            </div>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleViewProfile(child.id);
-              }}
-              className="mt-2 w-full flex items-center justify-center gap-2 text-sm text-[#1A73E8] hover:bg-blue-50 py-1.5 px-3 rounded-md transition-colors"
+        {children.map((child) => {
+          const childId = child.id || child._id;
+          return (
+            <div
+              key={childId}
+              className={`bg-white p-4 rounded-xl flex flex-col gap-3 shadow-sm cursor-pointer transition-all ${
+                selectedChild === childId
+                  ? "border-2 border-[#1A73E8]"
+                  : "border border-gray-200"
+              }`}
+              onClick={() => setSelectedChild(childId)}
             >
-              <User className="w-4 h-4" />
-              View Profile
-            </button>
-          </div>
-        ))}
+              <div className="flex items-center gap-4">
+                <img
+                  src={
+                    child?.image ||
+                    child.profilePicture ||
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      child.name || child.firstName + " " + child.lastName
+                    )}&background=1A73E8&color=fff`
+                  }
+                  className="w-12 h-12 rounded-full object-cover"
+                  alt={`${child.name || child.firstName}'s avatar`}
+                  onError={(e) => {
+                    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      child.name || child.firstName + " " + child.lastName
+                    )}&background=1A73E8&color=fff`;
+                  }}
+                />
+                <div>
+                  <h3 className="font-semibold">
+                    {child.name || `${child.firstName} ${child.lastName}`}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    {child.age
+                      ? `Age ${child.age}`
+                      : child.dateOfBirth
+                      ? `Born ${new Date(child.dateOfBirth).getFullYear()}`
+                      : ""}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleViewProfile(childId);
+                }}
+                className="mt-2 w-full flex items-center justify-center gap-2 text-sm text-[#1A73E8] hover:bg-blue-50 py-1.5 px-3 rounded-md transition-colors"
+              >
+                <User className="w-4 h-4" />
+                View Profile
+              </button>
+            </div>
+          );
+        })}
         <div
           className="bg-gray-50 p-4 rounded-xl flex flex-col items-center justify-center gap-2 shadow-sm cursor-pointer border-2 border-dashed border-gray-300 hover:border-[#1A73E8] hover:bg-blue-50 transition-colors min-h-[120px] w-full md:max-w-[200px]"
           onClick={() => navigate("/add-child")}
@@ -186,194 +247,252 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Dashboard Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Career Profile Summary */}
-        <div id="career-profile" className="bg-white p-6 rounded-xl shadow-sm">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold text-lg">Career Profile</h3>
-            <Star className="w-5 h-5 text-[#FFC107]" />
-          </div>
-          <div className="space-y-4">
-            <div className="flex items-start gap-3">
-              <Star className="w-5 h-5 text-[#FFC107] mt-0.5 flex-shrink-0" />
-              <p>
-                <span className="font-medium">Interests:</span>{" "}
-                {currentChild.interests.join(", ")}
-              </p>
+      {currentChild && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Career Profile Summary */}
+          <div
+            id="career-profile"
+            className="bg-white p-6 rounded-xl shadow-sm"
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-semibold text-lg">Career Profile</h3>
+              <Star className="w-5 h-5 text-[#FFC107]" />
             </div>
-            <div className="flex items-start gap-3">
-              <Trophy className="w-5 h-5 text-[#FFC107] mt-0.5 flex-shrink-0" />
-              <p>
-                <span className="font-medium">Skills:</span>{" "}
-                {currentChild.skills.join(", ")}
-              </p>
-            </div>
-            <div className="flex items-start gap-3">
-              <Lightbulb className="w-5 h-5 text-[#FFC107] mt-0.5 flex-shrink-0" />
-              <p>
-                <span className="font-medium">Dream Job:</span>{" "}
-                {currentChild.dreamJob}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Learning Activities */}
-        <div
-          id="learning-activities"
-          className="bg-white p-6 rounded-xl shadow-sm"
-        >
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold text-lg">Learning Activities</h3>
-            <span className="bg-green-100 text-green-600 px-3 py-1 rounded-full text-sm">
-              {currentChild.completedActivities.length} Completed
-            </span>
-          </div>
-          <div className="space-y-4">
-            {currentChild.completedActivities.map((activity, index) => (
-              <div
-                key={`completed-${index}`}
-                className="flex items-center justify-between"
-              >
-                <div className="flex items-center gap-3">
-                  <Code className="w-5 h-5 text-[#1A73E8]" />
-                  <p>{activity}</p>
-                </div>
-                <span className="text-green-500">✓</span>
-              </div>
-            ))}
-            {currentChild.inProgressActivities.map((activity, index) => (
-              <div
-                key={`inprogress-${index}`}
-                className="flex items-center justify-between"
-              >
-                <div className="flex items-center gap-3">
-                  <Bot className="w-5 h-5 text-[#1A73E8]" />
-                  <p>{activity}</p>
-                </div>
-                <span className="text-blue-500 text-sm font-medium">
-                  In Progress
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Mentorship Sessions */}
-        <div id="mentorship" className="bg-white p-6 rounded-xl shadow-sm">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold text-lg">Upcoming Sessions</h3>
-            <button className="text-[#1A73E8] hover:underline text-sm">
-              Book New
-            </button>
-          </div>
-          <div className="space-y-4">
-            {currentChild.upcomingSessions.length > 0 ? (
-              currentChild.upcomingSessions.map((session, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-4 bg-blue-50 p-3 rounded-lg"
-                >
-                  <img
-                    src={session.avatar}
-                    className="w-10 h-10 rounded-full object-cover"
-                    alt={`${session.mentor}'s avatar`}
-                  />
-                  <div>
-                    <p className="font-semibold">{session.mentor}</p>
-                    <p className="text-sm text-gray-500">{session.time}</p>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-500 text-sm">
-                No upcoming sessions scheduled
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Excursions */}
-        <div
-          id="excursions"
-          className="bg-white p-6 rounded-xl shadow-sm hidden"
-        >
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold text-lg">Scheduled Excursions</h3>
-            <Map className="w-5 h-5 text-[#FFC107]" />
-          </div>
-          <div className="space-y-4">
-            {currentChild.scheduledExcursions.length > 0 ? (
-              currentChild.scheduledExcursions.map((excursion, index) => (
-                <div
-                  key={index}
-                  className="border border-gray-200 p-3 rounded-lg"
-                >
-                  <p className="font-semibold">{excursion.title}</p>
-                  <p className="text-sm text-gray-500">
-                    Date: {excursion.date}
+            <div className="space-y-4">
+              {currentChild.interests && currentChild.interests.length > 0 ? (
+                <div className="flex items-start gap-3">
+                  <Star className="w-5 h-5 text-[#FFC107] mt-0.5 flex-shrink-0" />
+                  <p>
+                    <span className="font-medium">Interests:</span>{" "}
+                    {Array.isArray(currentChild.interests)
+                      ? currentChild.interests.join(", ")
+                      : currentChild.interests}
                   </p>
-                  <p className="text-sm text-gray-500">
-                    Location: {excursion.location}
+                </div>
+              ) : (
+                <div className="flex items-start gap-3">
+                  <Star className="w-5 h-5 text-gray-300 mt-0.5 flex-shrink-0" />
+                  <p className="text-gray-500">
+                    <span className="font-medium">Interests:</span> Not
+                    specified yet
                   </p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <svg
-                      className="w-5 h-5 text-red-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
+                </div>
+              )}
+
+              {currentChild.skills && currentChild.skills.length > 0 ? (
+                <div className="flex items-start gap-3">
+                  <Trophy className="w-5 h-5 text-[#FFC107] mt-0.5 flex-shrink-0" />
+                  <p>
+                    <span className="font-medium">Skills:</span>{" "}
+                    {Array.isArray(currentChild.skills)
+                      ? currentChild.skills.join(", ")
+                      : currentChild.skills}
+                  </p>
+                </div>
+              ) : (
+                <div className="flex items-start gap-3">
+                  <Trophy className="w-5 h-5 text-gray-300 mt-0.5 flex-shrink-0" />
+                  <p className="text-gray-500">
+                    <span className="font-medium">Skills:</span> Not identified
+                    yet
+                  </p>
+                </div>
+              )}
+
+              {currentChild.dreamJob || currentChild.careerGoal ? (
+                <div className="flex items-start gap-3">
+                  <Lightbulb className="w-5 h-5 text-[#FFC107] mt-0.5 flex-shrink-0" />
+                  <p>
+                    <span className="font-medium">Dream Job:</span>{" "}
+                    {currentChild.dreamJob || currentChild.careerGoal}
+                  </p>
+                </div>
+              ) : (
+                <div className="flex items-start gap-3">
+                  <Lightbulb className="w-5 h-5 text-gray-300 mt-0.5 flex-shrink-0" />
+                  <p className="text-gray-500">
+                    <span className="font-medium">Dream Job:</span> Not set yet
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Learning Activities */}
+          <div
+            id="learning-activities"
+            className="bg-white p-6 rounded-xl shadow-sm"
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-semibold text-lg">Learning Activities</h3>
+              <span className="bg-green-100 text-green-600 px-3 py-1 rounded-full text-sm">
+                {currentChild.completedActivities?.length || 0} Completed
+              </span>
+            </div>
+            <div className="space-y-4">
+              {currentChild.completedActivities &&
+              currentChild.completedActivities.length > 0
+                ? currentChild.completedActivities.map((activity, index) => (
+                    <div
+                      key={`completed-${index}`}
+                      className="flex items-center justify-between"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      ></path>
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      ></path>
-                    </svg>
-                    <p className="text-sm">{excursion.location}</p>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-500 text-sm">No scheduled excursions</p>
-            )}
-          </div>
-        </div>
+                      <div className="flex items-center gap-3">
+                        <Code className="w-5 h-5 text-[#1A73E8]" />
+                        <p>{activity.name || activity.title || activity}</p>
+                      </div>
+                      <span className="text-green-500">✓</span>
+                    </div>
+                  ))
+                : null}
 
-        {/* Badges */}
-        <div id="badges" className="bg-white p-6 rounded-xl shadow-sm">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold text-lg">Recent Badges</h3>
-            <span className="text-sm text-gray-500">12 Total</span>
+              {currentChild.inProgressActivities &&
+              currentChild.inProgressActivities.length > 0
+                ? currentChild.inProgressActivities.map((activity, index) => (
+                    <div
+                      key={`inprogress-${index}`}
+                      className="flex items-center justify-between"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Bot className="w-5 h-5 text-[#1A73E8]" />
+                        <p>{activity.name || activity.title || activity}</p>
+                      </div>
+                      <span className="text-blue-500 text-sm font-medium">
+                        In Progress
+                      </span>
+                    </div>
+                  ))
+                : null}
+
+              {(!currentChild.completedActivities ||
+                currentChild.completedActivities.length === 0) &&
+                (!currentChild.inProgressActivities ||
+                  currentChild.inProgressActivities.length === 0) && (
+                  <div className="text-center py-4">
+                    <Code className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                    <p className="text-gray-500 text-sm">
+                      No activities started yet
+                    </p>
+                    <button className="text-[#1A73E8] hover:underline text-sm mt-2">
+                      Browse Activities
+                    </button>
+                  </div>
+                )}
+            </div>
           </div>
-          <div className="grid grid-cols-4 gap-4">
-            <div className="text-center">
-              <Trophy className="w-6 h-6 text-[#FFC107] mx-auto" />
-              <p className="text-xs mt-1">Problem Solver</p>
+
+          {/* Mentorship Sessions */}
+          <div id="mentorship" className="bg-white p-6 rounded-xl shadow-sm">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-semibold text-lg">Upcoming Sessions</h3>
+              <button className="text-[#1A73E8] hover:underline text-sm">
+                Book New
+              </button>
             </div>
-            <div className="text-center">
-              <Brain className="w-6 h-6 text-[#1A73E8] mx-auto" />
-              <p className="text-xs mt-1">Critical Thinker</p>
+            <div className="space-y-4">
+              {currentChild.upcomingSessions &&
+              currentChild.upcomingSessions.length > 0 ? (
+                currentChild.upcomingSessions.map((session, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-4 bg-blue-50 p-3 rounded-lg"
+                  >
+                    <img
+                      src={
+                        session.mentor?.avatar ||
+                        session.mentor?.profilePicture ||
+                        `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                          session.mentor?.name || "Mentor"
+                        )}&background=34D399&color=fff`
+                      }
+                      className="w-10 h-10 rounded-full object-cover"
+                      alt={`${session.mentor?.name || "Mentor"}'s avatar`}
+                      onError={(e) => {
+                        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                          session.mentor?.name || "Mentor"
+                        )}&background=34D399&color=fff`;
+                      }}
+                    />
+                    <div>
+                      <p className="font-semibold">
+                        {session.mentor?.name || "Mentor"}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {session.scheduledTime
+                          ? new Date(session.scheduledTime).toLocaleString()
+                          : session.time}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-4">
+                  <Users className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                  <p className="text-gray-500 text-sm mb-2">
+                    No upcoming sessions scheduled
+                  </p>
+                  <button className="text-[#1A73E8] hover:underline text-sm">
+                    Schedule a Session
+                  </button>
+                </div>
+              )}
             </div>
-            <div className="text-center">
-              <Rocket className="w-6 h-6 text-purple-500 mx-auto" />
-              <p className="text-xs mt-1">Innovation</p>
+          </div>
+
+          {/* Badges */}
+          <div id="badges" className="bg-white p-6 rounded-xl shadow-sm">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-semibold text-lg">Recent Badges</h3>
+              <span className="text-sm text-gray-500">
+                {currentChild.badges?.length || 0} Total
+              </span>
             </div>
-            <div className="text-center">
-              <Users className="w-6 h-6 text-green-500 mx-auto" />
-              <p className="text-xs mt-1">Team Player</p>
+            <div className="space-y-4">
+              {currentChild.badges && currentChild.badges.length > 0 ? (
+                <div className="grid grid-cols-4 gap-4">
+                  {currentChild.badges.slice(0, 4).map((badge, index) => (
+                    <div key={index} className="text-center">
+                      <div className="w-6 h-6 mx-auto mb-1">
+                        {badge.type === "problem-solver" && (
+                          <Trophy className="w-6 h-6 text-[#FFC107]" />
+                        )}
+                        {badge.type === "critical-thinker" && (
+                          <Brain className="w-6 h-6 text-[#1A73E8]" />
+                        )}
+                        {badge.type === "innovation" && (
+                          <Rocket className="w-6 h-6 text-purple-500" />
+                        )}
+                        {badge.type === "team-player" && (
+                          <Users className="w-6 h-6 text-green-500" />
+                        )}
+                        {![
+                          "problem-solver",
+                          "critical-thinker",
+                          "innovation",
+                          "team-player",
+                        ].includes(badge.type) && (
+                          <Star className="w-6 h-6 text-[#FFC107]" />
+                        )}
+                      </div>
+                      <p className="text-xs">
+                        {badge.name || badge.title || badge.type}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-4">
+                  <Trophy className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                  <p className="text-gray-500 text-sm">No badges earned yet</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Complete activities to earn badges!
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

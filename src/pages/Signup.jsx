@@ -9,6 +9,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 import "react-toastify/dist/ReactToastify.css";
 import { FcGoogle } from "react-icons/fc";
+import Logo from "../assets/logo.svg";
 
 const Signup = () => {
   const apiURL = import.meta.env.VITE_REACT_APP_BASE_URL;
@@ -83,9 +84,9 @@ const Signup = () => {
           {/* Header */}
           <div id="signup-header" className="text-center mb-8">
             <img
-              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg"
+              src={Logo}
               alt="Welcome"
-              className="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-[#FFC107]"
+              className="w-[100px] h-[100px] rounded-full mx-auto"
             />
             <h1 className="text-2xl font-bold text-[#0A1F44]">
               Join SkillSeed
@@ -230,7 +231,7 @@ const Signup = () => {
               )}
             </button>
           </form>
-          <div className="text-center my-4">OR</div >
+          <div className="text-center my-4">OR</div>
           {/* Google Login Button */}
           <button
             type="button"
