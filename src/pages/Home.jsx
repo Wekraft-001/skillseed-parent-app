@@ -384,7 +384,7 @@ const Home = () => {
           {/* Mentorship Sessions */}
           <div id="mentorship" className="bg-white p-6 rounded-xl shadow-sm">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold text-lg">Upcoming Sessions</h3>
+              <h3 className="font-semibold text-lg">Recommended Mentors</h3>
               <button className="text-[#1A73E8] hover:underline text-sm">
                 Book New
               </button>
