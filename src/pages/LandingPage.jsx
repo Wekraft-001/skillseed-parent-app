@@ -107,7 +107,7 @@ const LandingPage = () => {
                 <div className="inline-flex items-center gap-2 bg-[#FFC107]/20 text-[#1A73E8] px-6 py-3 rounded-full mb-6">
                   <Star className="w-5 h-5 text-[#FFC107]" />
                   <span className="font-semibold">
-                    Trusted by 10,000+ Parents
+                    Trusted by 100+ Parents
                   </span>
                 </div>
 
@@ -180,7 +180,7 @@ const LandingPage = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               <div className="text-center">
                 <div className="text-4xl font-bold text-[#1A73E8] mb-2">
-                  10K+
+                  700+
                 </div>
                 <div className="text-gray-600">Happy Children</div>
               </div>
