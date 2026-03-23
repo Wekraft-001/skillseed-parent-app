@@ -36,7 +36,7 @@ const Resources = () => {
         "Content-Type": "application/json",
       },
     });
-    // console.log(res.data, "content");
+    console.log(res.data, "content");
     return res.data;
   };
 
