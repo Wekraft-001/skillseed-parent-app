@@ -88,18 +88,18 @@ const SubscriptionManagement = () => {
   const transformSubscriptionData = (subscriptions) => {
     return subscriptions.map((sub) => ({
       id: sub._id,
-      name: `${sub.child.firstName} ${sub.child.lastName}`.trim(),
-      age: sub.child.age,
-      grade: `Grade ${sub.child.grade}`,
+      name: `${sub?.child?.firstName} ${sub?.child?.lastName}`.trim(),
+      age: sub?.child?.age,
+      grade: `Grade ${sub?.child?.grade}`,
       image:
-        sub.child.image ||
-        `https://via.placeholder.com/60x60/3B82F6/FFFFFF?text=${sub.child.firstName.charAt(
+        sub?.child?.image ||
+        `https://via.placeholder.com/60x60/3B82F6/FFFFFF?text=${sub?.child?.firstName.charAt(
           0
-        )}${sub.child.lastName.charAt(0)}`,
+        )}${sub?.child?.lastName.charAt(0)}`,
       subscription: {
         id: sub._id,
         status: getSubscriptionStatus(sub),
-        plan: getPlanName(sub.amount, sub.currency),
+        plan: getPlanName(sub?.amount, sub?.currency),
         amount: sub.amount,
         currency: sub.currency,
         startDate: sub.startDate,
