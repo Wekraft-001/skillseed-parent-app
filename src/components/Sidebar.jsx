@@ -94,21 +94,21 @@ const Sidebar = () => {
       label: "Add Child",
       path: "/add-child",
     },
-    {
-      icon: <BookOpen className="w-5 h-5 mr-2" />,
-      label: "Learning Activities",
-      path: "/learning-activities",
-    },
-    {
-      icon: <MessageSquare className="w-5 h-5 mr-2" />,
-      label: "Reflections",
-      path: "/reflections",
-    },
-    {
-      icon: <TrendingUp className="w-5 h-5 mr-2" />,
-      label: "Reports",
-      path: "/reports",
-    },
+    // {
+    //   icon: <BookOpen className="w-5 h-5 mr-2" />,
+    //   label: "Learning Activities",
+    //   path: "/learning-activities",
+    // },
+    // {
+    //   icon: <MessageSquare className="w-5 h-5 mr-2" />,
+    //   label: "Reflections",
+    //   path: "/reflections",
+    // },
+    // {
+    //   icon: <TrendingUp className="w-5 h-5 mr-2" />,
+    //   label: "Reports",
+    //   path: "/reports",
+    // },
     {
       icon: <Users2 className="w-5 h-5 mr-2" />,
       label: "Mentorship",

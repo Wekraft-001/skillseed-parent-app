@@ -55,7 +55,7 @@ const Home = () => {
         "Content-type": "application/json; charset=UTF-8",
       },
     });
-    console.log(data, "children info");
+    // console.log(data, "children info");
     return data;
   };
 

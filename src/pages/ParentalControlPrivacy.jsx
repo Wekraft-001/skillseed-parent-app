@@ -142,7 +142,7 @@ const ParentalControlPrivacy = () => {
       </div>
 
       {/* Child Selector with Enhanced Bubble Effect */}
-      <div
+      {/* <div
         id="child-selector"
         className="mb-8 flex items-center gap-4 relative"
       >
@@ -161,7 +161,7 @@ const ParentalControlPrivacy = () => {
           </div>
           <ChevronDown className="text-gray-400 ml-2 w-4 h-4" />
         </div>
-      </div>
+      </div> */}
 
       {/* Tab Navigation */}
       <div className="bg-white rounded-2xl shadow-sm p-1 mb-8 max-w-2xl">

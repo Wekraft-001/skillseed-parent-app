@@ -75,7 +75,10 @@ const MentorshipSessions = () => {
 
       {/* Back Navigation */}
       <div className="mb-6">
-        <Link to="/home" className="text-[#1A73E8] flex items-center gap-2 w-fit">
+        <Link
+          to="/home"
+          className="text-[#1A73E8] flex items-center gap-2 w-fit"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -93,9 +96,11 @@ const MentorshipSessions = () => {
           <span>Back to Dashboard</span>
         </Link>
       </div>
-
+      <div className="bg-[#1A73E8] text-white text-3xl font-extrabold text-center py-6 rounded-2xl shadow-lg tracking-wider animate-bounce">
+        🚧 COMING SOON 🚧
+      </div>
       {/* Child Selector */}
-      <div id="child-selector" className="mb-8">
+      {/* <div id="child-selector" className="mb-8">
         <div className="bg-white p-4 rounded-xl flex items-center gap-4 shadow-sm cursor-pointer border-2 border-[#1A73E8] w-fit">
           <img
             src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg"
@@ -107,7 +112,7 @@ const MentorshipSessions = () => {
             <p className="text-sm text-gray-500">Age 12</p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div id="mentorship-dashboard" className="grid grid-cols-12 gap-6">
         {/* Calendar Section */}

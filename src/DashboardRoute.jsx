@@ -40,10 +40,10 @@ const App = () => (
               path="child-career-profile/:childId"
               element={<ChildCareerProfile />}
             />
-            <Route
+            {/* <Route
               path="learning-activities"
               element={<LearningActivities />}
-            />
+            /> */}
             <Route
               path="mentorship-sessions"
               element={<MentorshipSessions />}
@@ -52,8 +52,8 @@ const App = () => (
               path="scheduled-excursions"
               element={<ScheduledExcursions />}
             />
-            <Route path="reflections" element={<ReflectionsAndFeedback />} />
-            <Route path="reports" element={<Reports />} />
+            {/* <Route path="reflections" element={<ReflectionsAndFeedback />} /> */}
+            {/* <Route path="reports" element={<Reports />} /> */}
             <Route
               path="parental-controls"
               element={<ParentalControlPrivacy />}

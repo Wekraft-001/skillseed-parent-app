@@ -164,6 +164,27 @@ const Header = () => {
     localStorage.removeItem("parentToken");
     navigate("/signin");
   };
+  const getChildrenCount = async () => {
+    const { data } = await axios.get(`${apiURL}/parent/dashboard`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    });
+    // console.log(data.dashboardResponse.childrenCount);
+    return data.dashboardResponse.childrenCount;
+  };
+  const {
+    data: childrenCount,
+    // isLoading,
+    // isError,
+    // error,
+  } = useQuery({
+    queryKey: ["child-count"],
+    queryFn: getChildrenCount,
+    enabled: !!token,
+    staleTime: 5 * 60 * 1000,
+  });
 
   const fetchUserDetails = async () => {
     const { data } = await axios.get(`${apiURL}/auth/profile`, {
@@ -352,7 +373,9 @@ const Header = () => {
                       {userData?.firstName + " " + userData?.lastName}
                     </h3>
                     <p className="text-sm text-gray-500">
-                      3 children connected
+                      {childrenCount ?? 0}{" "}
+                      {(childrenCount ?? 0) === 1 ? "child" : "children"}{" "}
+                      connected
                     </p>
                   </div>
                 </div>
@@ -418,7 +441,7 @@ const Header = () => {
                 </div>
               </MenuItem>
 
-              <MenuItem className="px-4 py-3 cursor-pointer hover:bg-gray-50">
+              {/* <MenuItem className="px-4 py-3 cursor-pointer hover:bg-gray-50">
                 <div className="flex items-center gap-3 text-base">
                   <div className="p-2 bg-amber-50 rounded-lg">
                     <svg
@@ -443,7 +466,7 @@ const Header = () => {
                     </div>
                   </div>
                 </div>
-              </MenuItem>
+              </MenuItem> */}
               <MenuItem className="px-4 py-3 cursor-pointer hover:bg-gray-50">
                 <div className="flex items-center gap-3 text-base">
                   <div className="p-2 bg-gray-100 rounded-lg">
