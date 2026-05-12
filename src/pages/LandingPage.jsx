@@ -19,9 +19,11 @@ import {
   Twitter,
   Instagram,
   Linkedin,
+  Phone,
 } from "lucide-react";
 import { PageMetadata } from "../components/PageMetadata";
 import Logo from "../assets/logo.svg";
+import Testimonials from "../components/Testimonial";
 
 const LandingPage = () => {
   return (
@@ -106,9 +108,7 @@ const LandingPage = () => {
               <div className="text-center lg:text-left">
                 <div className="inline-flex items-center gap-2 bg-[#FFC107]/20 text-[#1A73E8] px-6 py-3 rounded-full mb-6">
                   <Star className="w-5 h-5 text-[#FFC107]" />
-                  <span className="font-semibold">
-                    Trusted by 100+ Parents
-                  </span>
+                  <span className="font-semibold">Trusted by 100+ Parents</span>
                 </div>
 
                 <h1 className="text-3xl md:text-5xl font-bold text-[#212121]">
@@ -180,7 +180,7 @@ const LandingPage = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               <div className="text-center">
                 <div className="text-4xl font-bold text-[#1A73E8] mb-2">
-                  700+
+                  100+
                 </div>
                 <div className="text-gray-600">Happy Children</div>
               </div>
@@ -192,9 +192,9 @@ const LandingPage = () => {
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold text-[#FFC107] mb-2">
-                  50+
+                  10+
                 </div>
-                <div className="text-gray-600">Learning Modules</div>
+                <div className="text-gray-600">Active Communities</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold text-[#FF4081] mb-2">
@@ -280,7 +280,7 @@ const LandingPage = () => {
                   Gamified Learning
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  Interactive games, rewards, and challenges that make learning
+                  Interactive projects, rewards, and challenges that make learning
                   irresistibly fun.
                 </p>
                 {/* <div className="flex items-center gap-2 text-[#FF4081] font-semibold">
@@ -327,94 +327,9 @@ const LandingPage = () => {
         </section>
 
         {/* Testimonials Section */}
-        <section className="py-10 bg-white relative z-10">
-          <div className="container mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-[#212121] mb-6">
-                What Parents Are Saying
-              </h2>
-              <p className="text-xl text-gray-600">
-                Real stories from families who've transformed their children's
-                learning
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <div className="bg-gradient-to-br from-[#1A73E8]/5 to-[#4CAF50]/5 rounded-3xl p-8 border-2 border-[#1A73E8]/10">
-                <div className="flex items-center gap-4 mb-6">
-                  <img
-                    className="w-16 h-16 rounded-full object-cover"
-                    src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg"
-                    alt="Parent testimonial"
-                  />
-                  <div>
-                    <h4 className="font-bold text-[#212121]">Sarah Johnson</h4>
-                    <p className="text-gray-600">Mother of Emma, 8</p>
-                  </div>
-                </div>
-                <div className="flex text-[#FFC107] mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-current" />
-                  ))}
-                </div>
-                <p className="text-gray-700">
-                  "Emma went from struggling with math to loving it! The
-                  personalized approach really works. She's more confident and
-                  excited about learning every day."
-                </p>
-              </div>
-
-              <div className="bg-gradient-to-br from-[#FFC107]/5 to-[#FF4081]/5 rounded-3xl p-8 border-2 border-[#FFC107]/10">
-                <div className="flex items-center gap-4 mb-6">
-                  <img
-                    className="w-16 h-16 rounded-full object-cover"
-                    src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg"
-                    alt="Parent testimonial"
-                  />
-                  <div>
-                    <h4 className="font-bold text-[#212121]">Michael Chen</h4>
-                    <p className="text-gray-600">Father of Alex, 12</p>
-                  </div>
-                </div>
-                <div className="flex text-[#FFC107] mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-current" />
-                  ))}
-                </div>
-                <p className="text-gray-700">
-                  "As a busy parent, I love the progress tracking. I can see
-                  exactly how Alex is doing and celebrate his achievements. The
-                  platform is incredibly user-friendly."
-                </p>
-              </div>
-
-              <div className="bg-gradient-to-br from-[#4CAF50]/5 to-[#1A73E8]/5 rounded-3xl p-8 border-2 border-[#4CAF50]/10">
-                <div className="flex items-center gap-4 mb-6">
-                  <img
-                    className="w-16 h-16 rounded-full object-cover"
-                    src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-6.jpg"
-                    alt="Parent testimonial"
-                  />
-                  <div>
-                    <h4 className="font-bold text-[#212121]">Amara Okafor</h4>
-                    <p className="text-gray-600">Mother of twins, 10</p>
-                  </div>
-                </div>
-                <div className="flex text-[#FFC107] mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-current" />
-                  ))}
-                </div>
-                <p className="text-gray-700">
-                  "My twins have different learning styles, and SkillSeed adapts
-                  perfectly to both. They're learning together but at their own
-                  pace. It's amazing to watch!"
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
+        <div>
+          <Testimonials />
+        </div>
         {/* CTA Section */}
         <section className="py-10 bg-gradient-to-r from-[#1A73E8] to-[#4CAF50] relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none">
@@ -430,7 +345,7 @@ const LandingPage = () => {
               Ready to Unlock Your Child's Potential?
             </h2>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Join thousands of parents who have discovered their children's
+              Join the hundreds of parents who have discovered their children's
               hidden talents. Start your free assessment today!
             </p>
 
@@ -450,21 +365,23 @@ const LandingPage = () => {
               </button> */}
             </div>
 
-            <div className="mt-8 text-white/80">
+            <div className="mt-4 text-white/80">
               <Shield className="w-5 h-5 mr-2 inline" />
-              No credit card required • 100% secure • Instant access
+              100% secure • Instant access
             </div>
           </div>
         </section>
 
         {/* Footer */}
-        <footer className="bg-[#0A1F44] text-white py-16">
+        <footer className="bg-[#0A1F44] text-white py-12">
           <div className="container mx-auto px-6">
-            <div className="grid md:grid-cols-4 gap-8 mb-8">
-              <div>
-                <div className="flex items-center gap-2 mb-6">
+            {/* Main footer content */}
+            <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-10 mb-10">
+              {/* Brand block */}
+              <div className="flex-1 max-w-sm">
+                <div className="flex items-center gap-2 mb-4">
                   <div className="w-14 rounded-full flex items-center justify-center">
-                    <img src={Logo} />
+                    <img src={Logo} alt="SkillSeed Logo" />
                   </div>
                   <span className="text-2xl font-bold">SkillSeed</span>
                 </div>
@@ -474,55 +391,84 @@ const LandingPage = () => {
                 </p>
               </div>
 
-              <div>
-                <h4 className="font-semibold mb-4">Product</h4>
-                <div className="space-y-2 text-sm">
-                  <span className="text-gray-300 hover:text-[#FFC107] transition-colors block cursor-pointer">
-                    Features
-                  </span>
-                  <span className="text-gray-300 hover:text-[#FFC107] transition-colors block cursor-pointer">
-                    Pricing
-                  </span>
-                  <span className="text-gray-300 hover:text-[#FFC107] transition-colors block cursor-pointer">
-                    Demo
-                  </span>
-                </div>
-              </div>
+              {/* Contact & Social block */}
+              <div className="flex flex-col sm:flex-row gap-10 md:gap-16">
+                {/* Contact numbers */}
+                <div>
+                  <h4 className="font-semibold mb-4 text-white">Contact Us</h4>
+                  <div className="space-y-3 text-sm">
+                    <a
+                      href="tel:+250793177089"
+                      className="flex items-center gap-2 text-gray-300 hover:text-[#FFC107] transition-colors"
+                    >
+                      <span className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Phone className="w-3.5 h-3.5" />
+                      </span>
+                      +250 793 177 089
+                    </a>
 
-              <div>
-                <h4 className="font-semibold mb-4">Support</h4>
-                <div className="space-y-2 text-sm">
-                  <span className="text-gray-300 hover:text-[#FFC107] transition-colors block cursor-pointer">
-                    Help Center
-                  </span>
-                  <span className="text-gray-300 hover:text-[#FFC107] transition-colors block cursor-pointer">
-                    Contact Us
-                  </span>
-                  <span className="text-gray-300 hover:text-[#FFC107] transition-colors block cursor-pointer">
-                    Privacy Policy
-                  </span>
+                    <a
+                      href="tel:+250787161453"
+                      className="flex items-center gap-2 text-gray-300 hover:text-[#FFC107] transition-colors"
+                    >
+                      <span className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Phone className="w-3.5 h-3.5" />
+                      </span>
+                      +250 787 161 453
+                    </a>
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <h4 className="font-semibold mb-4">Connect</h4>
-                <div className="flex gap-4">
-                  <span className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#FFC107] transition-colors cursor-pointer">
-                    <Facebook className="w-4 h-4" />
-                  </span>
-                  <span className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#FFC107] transition-colors cursor-pointer">
-                    <Linkedin className="w-4 h-4" />
-                  </span>
-                  <span className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#FFC107] transition-colors cursor-pointer">
-                    <Instagram className="w-4 h-4" />
-                  </span>
+                {/* Social media */}
+                <div>
+                  <h4 className="font-semibold mb-4 text-white">Follow Us</h4>
+                  <div className="flex gap-3">
+                    <a
+                      href="https://www.instagram.com/wekraft_ltd/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Instagram"
+                      className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#FFC107] hover:text-[#0A1F44] transition-colors"
+                    >
+                      <Instagram className="w-4 h-4" />
+                    </a>
+
+                    <a
+                      href="https://www.linkedin.com/company/wekraft-ltd/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="LinkedIn"
+                      className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#FFC107] hover:text-[#0A1F44] transition-colors"
+                    >
+                      <Linkedin className="w-4 h-4" />
+                    </a>
+
+                    <a
+                      href="https://www.tiktok.com/@wekraft_limited"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="TikTok"
+                      className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#FFC107] hover:text-[#0A1F44] transition-colors"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z" />
+                      </svg>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="border-t border-white/20 pt-8 text-center text-gray-300 text-sm">
+            {/* Bottom bar */}
+            <div className="border-t border-white/20 pt-6 text-center text-gray-400 text-xs">
               <p>
-                &copy; 2025 SkillSeed by WeKraft Limited. All rights reserved.
+                &copy; {new Date().getFullYear()} SkillSeed by WeKraft Limited.
+                All rights reserved.
               </p>
             </div>
           </div>

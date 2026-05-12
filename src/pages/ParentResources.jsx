@@ -16,7 +16,7 @@ const Resources = () => {
   const token = localStorage.getItem("parentToken");
   const [selectedContent, setSelectedContent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("videos");
+  const [activeTab, setActiveTab] = useState("books");
 
   const handleContentClick = (content) => {
     setSelectedContent(content);
@@ -25,7 +25,6 @@ const Resources = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    // Small delay to allow modal animation before clearing content
     setTimeout(() => setSelectedContent(null), 300);
   };
 
@@ -36,7 +35,7 @@ const Resources = () => {
         "Content-Type": "application/json",
       },
     });
-    console.log(res.data, "content");
+    // console.log(res.data, "content");
     return res.data;
   };
 
@@ -50,11 +49,9 @@ const Resources = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Filter content by type
   const videos = resources.filter((item) => item.type === "video");
   const books = resources.filter((item) => item.type === "book");
 
-  // Empty state component
   const EmptyState = ({ type }) => (
     <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
       <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
@@ -75,7 +72,6 @@ const Resources = () => {
     </div>
   );
 
-  // Loading state
   if (isLoading) {
     return (
       <div className="container mx-auto px-6 py-8">
@@ -87,7 +83,6 @@ const Resources = () => {
     );
   }
 
-  // Error state
   if (isError) {
     return (
       <div className="container mx-auto px-6 py-8">
@@ -122,60 +117,70 @@ const Resources = () => {
     <div className="relative">
       {/* Content Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-4xl bg-white">
+        <DialogContent className="sm:max-w-5xl max-h-[95vh] bg-white flex flex-col">
           {selectedContent && (
             <>
-              <DialogHeader>
+              <DialogHeader className="flex-shrink-0">
                 <DialogTitle className="text-2xl font-bold text-deep-navy">
                   {selectedContent.title}
                 </DialogTitle>
-                <DialogDescription className="text-gray-600">
+                {/* <DialogDescription className="text-gray-600">
                   {selectedContent.description}
-                </DialogDescription>
-                <div className="flex items-center space-x-4 mt-2">
-                  {selectedContent.author && (
-                    <div className="text-sm text-gray-500">
-                      By: {selectedContent.author}
-                    </div>
-                  )}
-                </div>
+                </DialogDescription> */}
+                {selectedContent.author && (
+                  <div className="text-sm text-gray-500 mt-1">
+                    By: {selectedContent.author}
+                  </div>
+                )}
               </DialogHeader>
 
-              <div className="mt-6">
+              <div className="flex-1 min-h-0">
                 {selectedContent.type === "video" ? (
-                  <div className="aspect-w-16 aspect-h-9 bg-black rounded-lg overflow-hidden">
-                    <div className="w-full h-96 bg-gray-100 flex items-center justify-center">
-                      {selectedContent.videoUrl ? (
-                        <iframe
-                          className="w-full h-full"
-                          src={selectedContent.videoUrl
-                            .replace("youtu.be/", "youtube.com/embed/")
-                            .replace("?si=", "?start=0&")}
-                          title={selectedContent.title}
-                          frameBorder="0"
-                          allowFullScreen
-                        />
-                      ) : (
-                        <div className="text-gray-500 text-center p-8">
-                          <Play className="w-16 h-16 mx-auto mb-4" />
-                          <p>Video not available</p>
-                        </div>
-                      )}
-                    </div>
+                  /* ── VIDEO ── */
+                  <div className="w-full h-96 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
+                    {selectedContent.videoUrl ? (
+                      <iframe
+                        className="w-full h-full"
+                        src={selectedContent.videoUrl
+                          .replace("youtu.be/", "youtube.com/embed/")
+                          .replace("?si=", "?start=0&")}
+                        title={selectedContent.title}
+                        frameBorder="0"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <div className="text-gray-500 text-center p-8">
+                        <Play className="w-16 h-16 mx-auto mb-4" />
+                        <p>Video not available</p>
+                      </div>
+                    )}
                   </div>
                 ) : (
-                  <div className="prose max-w-none p-6 bg-gray-50 rounded-lg">
-                    <h3 className="text-xl font-semibold mb-4">
-                      {selectedContent.title}
-                    </h3>
-                    <p className="text-gray-700 leading-relaxed">
-                      {selectedContent.content || selectedContent.description}
-                    </p>
+                  /* ── BOOK ── ✅ renders PDF via iframe */
+                  <div
+                    className="w-full rounded-lg overflow-hidden border border-gray-200"
+                    style={{ height: "75vh" }}
+                  >
+                    {selectedContent.bookUrl ? (
+                      <iframe
+                        className="w-full h-full"
+                        src={selectedContent.bookUrl}
+                        title={selectedContent.title}
+                        type="application/pdf"
+                      />
+                    ) : (
+                      <div className="prose max-w-none p-6 bg-gray-50 rounded-lg h-full overflow-y-auto">
+                        <p className="text-gray-700 leading-relaxed">
+                          {selectedContent.content ||
+                            selectedContent.description}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
 
-              <div className="mt-6 flex justify-end">
+              <div className="mt-4 flex justify-end flex-shrink-0">
                 <Button
                   variant="outline"
                   onClick={handleCloseModal}
@@ -200,7 +205,6 @@ const Resources = () => {
               className="absolute bottom-6 right-16 w-6 h-6 bg-blue-300 rounded-full opacity-40 animate-pulse"
               style={{ animationDelay: "1s" }}
             ></div>
-
             <div className="flex justify-between items-center relative z-10">
               <div>
                 <h2 className="text-3xl font-bold text-deep-navy mb-2">
@@ -217,17 +221,7 @@ const Resources = () => {
         {/* Category Tabs */}
         <div id="category-tabs" className="mb-8">
           <div className="flex space-x-4 bg-white rounded-full p-2 shadow-lg border-2 border-gray-100">
-            <button
-              onClick={() => setActiveTab("videos")}
-              className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-semibold shadow-lg transition ${
-                activeTab === "videos"
-                  ? "bg-gradient-to-r from-primary-blue to-blue-600 text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              <Video className="w-4 h-4" />
-              Videos ({videos.length})
-            </button>
+            {/* ✅ Books tab rendered first */}
             <button
               onClick={() => setActiveTab("books")}
               className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-semibold shadow-lg transition ${
@@ -239,67 +233,22 @@ const Resources = () => {
               <Book className="w-4 h-4" />
               Books ({books.length})
             </button>
+            <button
+              onClick={() => setActiveTab("videos")}
+              className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-semibold shadow-lg transition ${
+                activeTab === "videos"
+                  ? "bg-gradient-to-r from-primary-blue to-blue-600 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              <Video className="w-4 h-4" />
+              Videos ({videos.length})
+            </button>
           </div>
         </div>
 
         {/* Content Grid */}
         <div className="w-full">
-          {/* Videos Section */}
-          {activeTab === "videos" && (
-            <div id="videos-section" className="mb-12">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-2xl font-bold text-deep-navy">
-                  Educational Videos
-                </h3>
-                <span className="bg-accent-yellow text-deep-navy px-4 py-2 rounded-full text-sm font-semibold">
-                  {videos.length} Videos
-                </span>
-              </div>
-
-              {videos.length === 0 ? (
-                <EmptyState type="videos" />
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {videos.map((video, index) => (
-                    <div
-                      key={video.id || index}
-                      className="bg-white rounded-3xl overflow-hidden shadow-lg border-2 border-blue-100 card-hover"
-                    >
-                      <div
-                        className="video-thumbnail h-40 relative flex items-center justify-center bg-cover bg-center"
-                        style={{
-                          backgroundImage: video.thumbnailUrl
-                            ? `url(${video.thumbnailUrl})`
-                            : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                        }}
-                      >
-                        <Play className="text-white w-12 h-12" />
-                      </div>
-                      <div className="p-6">
-                        <h4 className="font-bold text-deep-navy mb-2">
-                          {video.title}
-                        </h4>
-                        <p className="text-gray-600 text-sm mb-3">
-                          {video.description}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2"></div>
-                          <button
-                            onClick={() => handleContentClick(video)}
-                            className="flex bg-primary-blue text-white px-4 py-2 rounded-full text-xs font-semibold hover:bg-blue-600 transition"
-                          >
-                            <Play className="w-4 h-4 mr-1" />
-                            Watch
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
           {/* Books Section */}
           {activeTab === "books" && (
             <div id="books-section" className="mb-12">
@@ -318,7 +267,7 @@ const Resources = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {books.map((book, index) => (
                     <div
-                      key={book.id || index}
+                      key={book.id || book._id || index}
                       className="bg-white rounded-3xl overflow-hidden shadow-lg border-2 border-pink-100 card-hover"
                     >
                       <div
@@ -329,22 +278,80 @@ const Resources = () => {
                             : "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
                         }}
                       >
-                        <BookOpen className="text-white w-12 h-12" />
+                        <BookOpen className="text-white w-12 h-12 drop-shadow-lg" />
                       </div>
                       <div className="p-4">
                         <h4 className="font-bold text-deep-navy mb-2 text-sm">
                           {book.title}
                         </h4>
-                        <p className="text-gray-600 text-xs mb-3">
+                        <p className="text-gray-600 text-xs mb-3 line-clamp-2">
                           {book.description}
                         </p>
-                        <div className="flex flex-col space-y-2">
+                        {book.author && (
+                          <p className="text-gray-400 text-xs mb-3">
+                            By {book.author}
+                          </p>
+                        )}
+                        <button
+                          onClick={() => handleContentClick(book)}
+                          className="w-full flex items-center justify-center bg-pink-500 text-white px-3 py-2 rounded-full text-xs font-semibold hover:bg-pink-600 transition"
+                        >
+                          <Eye className="w-4 h-4 mr-1" />
+                          Read
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Videos Section */}
+          {activeTab === "videos" && (
+            <div id="videos-section" className="mb-12">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-2xl font-bold text-deep-navy">
+                  Educational Videos
+                </h3>
+                <span className="bg-accent-yellow text-deep-navy px-4 py-2 rounded-full text-sm font-semibold">
+                  {videos.length} Videos
+                </span>
+              </div>
+
+              {videos.length === 0 ? (
+                <EmptyState type="videos" />
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {videos.map((video, index) => (
+                    <div
+                      key={video.id || video._id || index}
+                      className="bg-white rounded-3xl overflow-hidden shadow-lg border-2 border-blue-100 card-hover"
+                    >
+                      <div
+                        className="video-thumbnail h-40 relative flex items-center justify-center bg-cover bg-center"
+                        style={{
+                          backgroundImage: video.thumbnailUrl
+                            ? `url(${video.thumbnailUrl})`
+                            : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                        }}
+                      >
+                        <Play className="text-white w-12 h-12 drop-shadow-lg" />
+                      </div>
+                      <div className="p-6">
+                        <h4 className="font-bold text-deep-navy mb-2">
+                          {video.title}
+                        </h4>
+                        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                          {video.description}
+                        </p>
+                        <div className="flex items-center justify-end">
                           <button
-                            onClick={() => handleContentClick(book)}
-                            className="w-full flex items-center justify-center bg-pink-500 text-white px-3 py-2 rounded-full text-xs font-semibold hover:bg-pink-600 transition"
+                            onClick={() => handleContentClick(video)}
+                            className="flex items-center bg-primary-blue text-white px-4 py-2 rounded-full text-xs font-semibold hover:bg-blue-600 transition"
                           >
-                            <Eye className="w-4 h-4 mr-1" />
-                            Read
+                            <Play className="w-4 h-4 mr-1" />
+                            Watch
                           </button>
                         </div>
                       </div>
