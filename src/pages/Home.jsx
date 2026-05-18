@@ -15,7 +15,7 @@ import {
   User,
   UserPlus,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Home = () => {
   const apiURL = import.meta.env.VITE_REACT_APP_BASE_URL;
@@ -373,9 +373,9 @@ const Home = () => {
                     <p className="text-gray-500 text-sm">
                       No activities started yet
                     </p>
-                    <button className="text-[#1A73E8] hover:underline text-sm mt-2">
+                    {/* <button className="text-[#1A73E8] hover:underline text-sm mt-2">
                       Browse Activities
-                    </button>
+                    </button> */}
                   </div>
                 )}
             </div>
@@ -385,9 +385,9 @@ const Home = () => {
           <div id="mentorship" className="bg-white p-6 rounded-xl shadow-sm">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-semibold text-lg">Recommended Mentors</h3>
-              <button className="text-[#1A73E8] hover:underline text-sm">
+              <Link to='/mentorship-sessions' className="text-[#1A73E8] hover:underline text-sm">
                 Book New
-              </button>
+              </Link>
             </div>
             <div className="space-y-4">
               {currentChild.upcomingSessions &&
@@ -431,9 +431,9 @@ const Home = () => {
                   <p className="text-gray-500 text-sm mb-2">
                     No upcoming sessions scheduled
                   </p>
-                  <button className="text-[#1A73E8] hover:underline text-sm">
+                  {/* <button className="text-[#1A73E8] hover:underline text-sm">
                     Schedule a Session
-                  </button>
+                  </button> */}
                 </div>
               )}
             </div>

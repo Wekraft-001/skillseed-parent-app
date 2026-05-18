@@ -410,7 +410,7 @@ const Header = () => {
                   </Link>
                 </div>
               </MenuItem>
-              <MenuItem className="px-4 py-3 cursor-pointer hover:bg-gray-50">
+              {/* <MenuItem className="px-4 py-3 cursor-pointer hover:bg-gray-50">
                 <div className="flex items-center gap-3 text-base">
                   <div className="p-2 bg-purple-50 rounded-lg">
                     <svg
@@ -439,7 +439,7 @@ const Header = () => {
                     </div>
                   </Link>
                 </div>
-              </MenuItem>
+              </MenuItem> */}
 
               {/* <MenuItem className="px-4 py-3 cursor-pointer hover:bg-gray-50">
                 <div className="flex items-center gap-3 text-base">
